@@ -42,7 +42,7 @@ class proflayout(QtGui.QWidget):
 	#set camera resolution, gain , sutter speed and framerate
 	self.camera.resolution = (self.imageres[0], self.imageres[1])
 	self.camera.framerate = 33 # in Hz
-	self.camera.shutter_speed = 500 # in us
+	self.camera.shutter_speed = 100 # in us
 	self.camera.exposure_mode = 'off'
 	self.camera.iso = 300
 
@@ -114,13 +114,20 @@ class proflayout(QtGui.QWidget):
 
     def startCamera(self):
 	# capture frames from the camera
+	i = 0
 	for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
+		i +=1
 
-		# grab the raw NumPy array representing the image
+		# grab the raw NumPy array representing the imagef
+		#start = time.time()
 		image = frame.array
+		np.nan_to_num(image)
+		#print 'init matrix time = ', time.time() - start
 
 		#take the green part of the image
+		#start = time.time()
 		greenimage = image[:,:,1]
+		#print 'taking green slice = ', time.time() - start
 		globmax = np.max(greenimage)
 
 		#cv2 thingy
@@ -129,7 +136,8 @@ class proflayout(QtGui.QWidget):
 		#create array for plotting with the number of pixels in each axis
 		xpixels = np.linspace(0,len(greenimage[0,:]),len(greenimage[0,:]))
 		ypixels = np.linspace(0,len(greenimage[:,0]),len(greenimage[:,0]))
-
+		
+		#start = time.time()
 		#row and colum sum for live plots
 		columnsum = greenimage.sum(axis=1)/40.0
 		rowsum = greenimage.sum(axis=0)/40.0
@@ -138,23 +146,36 @@ class proflayout(QtGui.QWidget):
 		columnsum = columnsum - np.min(columnsum)
 		rowsum = rowsum - np.min(rowsum)
 
+		#print 'column sums, row sums = ', time.time() - start
 		#Init Guess for fitting
 		columnampguess = columnsum.max()
 		columncenterguess = np.argmax(columnsum[::-1])
 
 		rowampguess = rowsum.max()
 		rowcenterguess = np.argmax(rowsum)
+		print columnampguess, columncenterguess
 		percexp = 100 * globmax/255.0
 		self.expbar.setValue(percexp)
+		
+		#start = time.time()
 
 		#Curve fit rowsum and column sum to gaussian, fit parameters returned in popt1/2
+		courserowx, courserowy = self.coursen(xpixels, rowsum, 2)
+		#print courserowx, courserowy
+		rowampguess = courserowy.max()
+		rowcenterguess = np.argmax(courserowy)
+		#print rowampguess, rowcenterguess
+		#coursecolumnx, coursecolumny = self.coursen(xpixels, rowsum, 10)
 		try:
-			popt1, pcov1 = curve_fit(self.func, xpixels, rowsum, p0=[rowampguess,rowcenterguess,200])
-			popt2, pcov2 = curve_fit(self.func, ypixels, columnsum[::-1], p0=[columnampguess,columncenterguess,200])
-
+			popt2, pcov2 = curve_fit(self.func, ypixels, columnsum[::-1], p0=[columnampguess,columncenterguess,170])
+			popt1, pcov1 = curve_fit(self.func, xpixels, rowsum, p0=[rowampguess,rowcenterguess,170])
+			#print 'fit'
+		
 		except:
 			popt1, popt2 = [[0,0,1], [0,0,1]]
-
+		#print 'fitting time = ', time.time() - start
+		#print (popt1[0] - rowampguess), popt1[1] - rowcenterguess
+		#print (popt2[0] - columnampguess), popt2[1] - columncenterguess
 		#updates data for row and column plots, also mirrors column data
         	self.linesrow.set_xdata(xpixels)
         	self.linesrow.set_ydata(rowsum)
@@ -163,6 +184,7 @@ class proflayout(QtGui.QWidget):
         	self.linescolumn.set_ydata(ypixels)
 
 		#updates data for fit row and column plots
+		#start = time.time()
         	self.linesrowfit.set_xdata(xpixels)
         	self.linesrowfit.set_ydata(self.func(xpixels, popt1[0],popt1[1],popt1[2]))
 
@@ -176,10 +198,13 @@ class proflayout(QtGui.QWidget):
 
         	self.figurecolumn.canvas.draw()
         	self.figurecolumn.canvas.flush_events()
+		#print 'updating plots = ', time.time() - start
 
         	#update X and Y waist labels with scaled waists
 		self.xwaist.setText('X = ' + str(np.abs(popt1[2]*2*5.875))[0:5] + 'um')
 		self.ywaist.setText('Y = ' +str(np.abs(popt2[2]*2*5.875))[0:5]  + 'um')
+
+		#start = time.time()
 
 		# convert RGB image np array to qPixmap and update canvas widget
 		qPixmap = self.nparrayToQPixmap(image)
@@ -189,8 +214,12 @@ class proflayout(QtGui.QWidget):
  
 		# clear the stream in preparation for the next frame
 		self.rawCapture.truncate(0)
+		#print 'image updating = ', time.time() - start
 
     def setupPlots(self):
+
+	self.xpixels = np.linspace(0,self.imageres[0],self.imageres[0])
+	self.ypixels = np.linspace(0,self.imageres[1],self.imageres[1])
 
         #Set up plot axes and figure positions
         self.figurerow, self.axrow = plt.subplots()
@@ -269,6 +298,19 @@ class proflayout(QtGui.QWidget):
 	gapcolumn = self.imageres[1]*(self.zoom * 0.04)
         self.axcolumn.set_xlim(0, 300)
 	self.axcolumn.set_ylim(gapcolumn,self.imageres[1] - gapcolumn)
+
+    def coursen(self, xdata,ydata,points):
+        newlength = int(len(xdata)/points)
+        newxdata = []
+        newydata = []
+        j = 0
+        for i in range(newlength):
+        	i = points*(i)
+        	newydata.append(np.mean(ydata[int(j):int(i)]))
+        	newxdata.append(xdata[int((i + j)/2)])
+        	j = i
+    	return np.array(newxdata), np.array(newydata)
+
 
 if __name__ == "__main__":
 
