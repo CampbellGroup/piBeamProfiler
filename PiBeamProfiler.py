@@ -31,6 +31,7 @@ class proflayout(QtGui.QWidget):
     def __init__(self):
         super(proflayout, self).__init__()
 	self.zoom = 1
+	self.fitting = False
 	self.imageres = [640,480]
 	desktop = QtGui.QDesktopWidget()
 	screensize = desktop.availableGeometry()
@@ -114,82 +115,90 @@ class proflayout(QtGui.QWidget):
 
     def startCamera(self):
 	# capture frames from the camera
-	i = 0
+
 	for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
-		i +=1
+		#start = time.time()
 
 		# grab the raw NumPy array representing the imagef
-		#start = time.time()
 		image = frame.array
 		np.nan_to_num(image)
-		#print 'init matrix time = ', time.time() - start
+
 
 		#take the green part of the image
-		#start = time.time()
 		greenimage = image[:,:,1]
-		#print 'taking green slice = ', time.time() - start
 		globmax = np.max(greenimage)
 
 		#cv2 thingy
  		key = cv2.waitKey(1) & 0xFF
-
-		#create array for plotting with the number of pixels in each axis
-		xpixels = np.linspace(0,len(greenimage[0,:]),len(greenimage[0,:]))
-		ypixels = np.linspace(0,len(greenimage[:,0]),len(greenimage[:,0]))
 		
-		#start = time.time()
 		#row and colum sum for live plots
 		columnsum = greenimage.sum(axis=1)/40.0
+		columnsum = columnsum[::-1]
 		rowsum = greenimage.sum(axis=0)/40.0
 
 		#subtract minumum value (background subtraction)
 		columnsum = columnsum - np.min(columnsum)
 		rowsum = rowsum - np.min(rowsum)
-
-		#print 'column sums, row sums = ', time.time() - start
-		#Init Guess for fitting
 		columnampguess = columnsum.max()
-		columncenterguess = np.argmax(columnsum[::-1])
+		columncenterguess = np.argmax(columnsum)
 
 		rowampguess = rowsum.max()
 		rowcenterguess = np.argmax(rowsum)
-		print columnampguess, columncenterguess
 		percexp = 100 * globmax/255.0
 		self.expbar.setValue(percexp)
-		
-		#start = time.time()
 
-		#Curve fit rowsum and column sum to gaussian, fit parameters returned in popt1/2
-		courserowx, courserowy = self.coursen(xpixels, rowsum, 2)
-		#print courserowx, courserowy
-		rowampguess = courserowy.max()
-		rowcenterguess = np.argmax(courserowy)
-		#print rowampguess, rowcenterguess
-		#coursecolumnx, coursecolumny = self.coursen(xpixels, rowsum, 10)
-		try:
-			popt2, pcov2 = curve_fit(self.func, ypixels, columnsum[::-1], p0=[columnampguess,columncenterguess,170])
-			popt1, pcov1 = curve_fit(self.func, xpixels, rowsum, p0=[rowampguess,rowcenterguess,170])
-			#print 'fit'
-		
-		except:
-			popt1, popt2 = [[0,0,1], [0,0,1]]
+		rowampguess = rowsum.max()
+		rowcenterguess = np.argmax(columnsum)
+		coursecolumny, coursecolumnx = self.coursen(self.ypixels, columnsum, 3)
+		courserowx, courserowy = self.coursen(self.xpixels, rowsum, 3)
+		coursecolumny = np.nan_to_num(coursecolumny)
+		coursecolumnx = np.nan_to_num(coursecolumnx)
+		courserowy = np.nan_to_num(courserowy)
+		courserowx = np.nan_to_num(courserowx)
+		columnampguess = coursecolumnx.max()
+		columncenterguess = np.argmax(coursecolumnx)
+		#print 'init matrix time = ', time.time() - start
+		#start = time.time()
+		if self.fitting == True:
+			try:
+				popt1, pcov1 = curve_fit(self.func, courserowx,courserowy, p0=[rowampguess,rowcenterguess,200])
+			except:
+				popt1 = [0,0,1]
+
+			try:
+				popt2, pcov2 = curve_fit(self.func, coursecolumny, coursecolumnx, p0=[columnampguess,columncenterguess,200])
+			except:
+				popt2 = [0,0,1]
+		else:
+			popt1, popt2 = [[0,0,1],[0,0,1]]
+
 		#print 'fitting time = ', time.time() - start
+
+		#start = time.time()
 		#print (popt1[0] - rowampguess), popt1[1] - rowcenterguess
 		#print (popt2[0] - columnampguess), popt2[1] - columncenterguess
 		#updates data for row and column plots, also mirrors column data
-        	self.linesrow.set_xdata(xpixels)
-        	self.linesrow.set_ydata(rowsum)
+        	self.linesrow.set_xdata(courserowx)
+        	self.linesrow.set_ydata(courserowy)
 
-        	self.linescolumn.set_xdata(columnsum[::-1])
-        	self.linescolumn.set_ydata(ypixels)
+        	self.linescolumn.set_xdata(coursecolumnx)
+        	self.linescolumn.set_ydata(coursecolumny)
 
 		#updates data for fit row and column plots
-		#start = time.time()
-        	self.linesrowfit.set_xdata(xpixels)
-        	self.linesrowfit.set_ydata(self.func(xpixels, popt1[0],popt1[1],popt1[2]))
 
-        	self.linescolumnfit.set_xdata(self.func(ypixels, popt2[0],popt2[1],popt2[2]))
-        	self.linescolumnfit.set_ydata(ypixels)
+
+
+        	self.linesrowfit.set_xdata(courserowx)
+        	self.linesrowfit.set_ydata(self.func(courserowx, popt1[0],popt1[1],popt1[2]))
+
+        	self.linescolumnfit.set_xdata(self.func(coursecolumny, popt2[0],popt2[1],popt2[2]))
+        	self.linescolumnfit.set_ydata(coursecolumny)
+
+        	#self.linescolumnfit.set_xdata(coursecolumnx)
+        	#self.linescolumnfit.set_ydata(coursecolumny)
+
+        	#self.linesrowfit.set_xdata(courserowx)
+        	#self.linesrowfit.set_ydata(courserowy)
 
 
         	#draw data and flush
@@ -198,11 +207,13 @@ class proflayout(QtGui.QWidget):
 
         	self.figurecolumn.canvas.draw()
         	self.figurecolumn.canvas.flush_events()
-		#print 'updating plots = ', time.time() - start
+		
 
         	#update X and Y waist labels with scaled waists
 		self.xwaist.setText('X = ' + str(np.abs(popt1[2]*2*5.875))[0:5] + 'um')
 		self.ywaist.setText('Y = ' +str(np.abs(popt2[2]*2*5.875))[0:5]  + 'um')
+
+		#print 'updating plots = ', time.time() - start
 
 		#start = time.time()
 
@@ -310,6 +321,8 @@ class proflayout(QtGui.QWidget):
         	newxdata.append(xdata[int((i + j)/2)])
         	j = i
     	return np.array(newxdata), np.array(newydata)
+
+
 
 
 if __name__ == "__main__":
