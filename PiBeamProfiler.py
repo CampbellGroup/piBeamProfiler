@@ -30,12 +30,18 @@ class proflayout(QtGui.QWidget):
 
     def __init__(self):
         super(proflayout, self).__init__()
-	self.zoom = 1
-	self.fitting = False
 	self.imageres = [640,480]
+	self.zoom = 1
+	self.getzoomgaps()
+	self.fitting = True
+	self.breakloop = False
 	desktop = QtGui.QDesktopWidget()
 	screensize = desktop.availableGeometry()
 	self.screenres = [screensize.width(),screensize.height()]
+	self.initCamera()
+	self.initializeGUI()
+
+    def initCamera(self):
 
 	# initialize the camera
 	self.camera = PiCamera()
@@ -48,18 +54,18 @@ class proflayout(QtGui.QWidget):
 	self.camera.iso = 300
 
 	#grab a reference to the raw camera capture
-	self.rawCapture = PiRGBArray(self.camera, size=(640, 480))
+	self.rawCapture = PiRGBArray(self.camera, size=(self.imageres[0], self.imageres[1]))
 
 	# allow the camera to warmup
 	time.sleep(0.1)
-	self.initializeGUI()
 
     def initializeGUI(self):
 
         self.setWindowTitle('Beam Profiler')
 	self.setGeometry(0, 0, self.screenres[0], self.screenres[1])
         layout = QtGui.QGridLayout()
-
+	
+	self.createPlots()
 	self.setupPlots()
 
 	self.expslider = QtGui.QSlider(QtCore.Qt.Vertical)
@@ -76,8 +82,8 @@ class proflayout(QtGui.QWidget):
 	self.ywaist.setStyleSheet('color: #FF6600; font-weight: bold; font-family: Copperplate / Copperplate Gothic Light, sans-serif')
 	self.zoominbutton = QtGui.QPushButton('Zoom In')
 	self.zoomoutbutton = QtGui.QPushButton('Zoom Out')
-	buttonsize = [int(self.screenres[1]/4 ), int(self.screenres[1]/2)]
-	self.highresbutton = QtGui.QPushButton('1024x768')
+	buttonsize = [int(self.screenres[1]/8 ), int(self.screenres[1]/4)]
+	self.highresbutton = QtGui.QPushButton('1296x972')
 	self.lowresbutton = QtGui.QPushButton('640x480')
 	self.highresbutton.setCheckable(True)
 	self.lowresbutton.setCheckable(True)
@@ -102,11 +108,12 @@ class proflayout(QtGui.QWidget):
 	layout.addWidget(self.canvascolumn,  0,1,2,1)
 	layout.addWidget(self.expbar,        0,4,2,1)
 	#withholds these widgets for tiny screens
-	if not (self.screenres[0] or self.screenres[1] <= 400):
-		layout.addWidget(self.lowresbutton,  0,2)
-		layout.addWidget(self.highresbutton, 1,2)
+	print self.screenres
+	if not ((self.screenres[0] or self.screenres[1]) <= 400):
+		layout.addWidget(self.lowresbutton,  1,2)
+		layout.addWidget(self.highresbutton, 1,3)
 		layout.addWidget(self.zoominbutton,  0,3)
-		layout.addWidget(self.zoomoutbutton, 1,3)
+		layout.addWidget(self.zoomoutbutton, 0,2)
 		layout.addWidget(self.expslider,     0,5,2,1)
 	layout.addWidget(self.xwaist,        2,1)
 	layout.addWidget(self.ywaist,        3,1)
@@ -117,6 +124,7 @@ class proflayout(QtGui.QWidget):
 	# capture frames from the camera
 
 	for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
+
 		#start = time.time()
 
 		# grab the raw NumPy array representing the imagef
@@ -210,14 +218,19 @@ class proflayout(QtGui.QWidget):
 		
 
         	#update X and Y waist labels with scaled waists
-		self.xwaist.setText('X = ' + str(np.abs(popt1[2]*2*5.875))[0:5] + 'um')
-		self.ywaist.setText('Y = ' +str(np.abs(popt2[2]*2*5.875))[0:5]  + 'um')
+		if self.imageres[0] == 640:
+			f = 2
+		else:
+			f=1
+		self.xwaist.setText('X = ' + str(np.abs(popt1[2]*2*5.875*f))[0:5] + 'um')
+		self.ywaist.setText('Y = ' +str(np.abs(popt2[2]*2*5.875*f))[0:5]  + 'um')
 
 		#print 'updating plots = ', time.time() - start
 
 		#start = time.time()
 
 		# convert RGB image np array to qPixmap and update canvas widget
+		image = image[int(self.gaprow):self.imageres[0] - int(self.gaprow),int(self.gapcolumn):self.imageres[1] - int(self.gapcolumn)]
 		qPixmap = self.nparrayToQPixmap(image)
 		videoy = int(self.screenres[0]/2.1)
 		videox = int(1.333 * videoy)
@@ -227,10 +240,7 @@ class proflayout(QtGui.QWidget):
 		self.rawCapture.truncate(0)
 		#print 'image updating = ', time.time() - start
 
-    def setupPlots(self):
-
-	self.xpixels = np.linspace(0,self.imageres[0],self.imageres[0])
-	self.ypixels = np.linspace(0,self.imageres[1],self.imageres[1])
+    def createPlots(self):
 
         #Set up plot axes and figure positions
         self.figurerow, self.axrow = plt.subplots()
@@ -245,6 +255,11 @@ class proflayout(QtGui.QWidget):
 
         self.linescolumn, = self.axcolumn.plot([],[],linewidth=2,color='purple')
 	self.linescolumnfit, = self.axcolumn.plot([],[],linestyle='--',linewidth=2,color='yellow')
+
+    def setupPlots(self):
+
+	self.xpixels = np.linspace(0,self.imageres[0],self.imageres[0])
+	self.ypixels = np.linspace(0,self.imageres[1],self.imageres[1])
 
         self.axrow.set_xlim(0, self.imageres[0])
 	self.axrow.set_ylim(0,300)
@@ -297,18 +312,36 @@ class proflayout(QtGui.QWidget):
 
     def lowres(self):
 	self.highresbutton.setChecked(False)
+	self.breakloop = True
+	self.imageres = [640, 480]
+	time.sleep(1)
+	self.camera.close()
+	self.setupPlots()
+	self.initCamera()
+	self.startCamera()
 
     def highres(self):
 	self.lowresbutton.setChecked(False)
+	self.breakloop = True
+	self.imageres = [1296,972]
+	time.sleep(1)
+	self.camera.close()
+	self.setupPlots()
+	self.initCamera()
+	self.startCamera()
+
+    def getzoomgaps(self):
+	self.gaprow = self.imageres[0]*(self.zoom * 0.04)
+	self.gapcolumn = self.imageres[1]*(self.zoom * 0.04)
 
     def resizePlots(self):
-	gaprow = self.imageres[0]*(self.zoom * 0.04)
-        self.axrow.set_xlim(gaprow, self.imageres[0] - gaprow)
+	self.getzoomgaps()
+        self.axrow.set_xlim(self.gaprow, self.imageres[0] - self.gaprow)
 	self.axrow.set_ylim(0,300)
 
-	gapcolumn = self.imageres[1]*(self.zoom * 0.04)
         self.axcolumn.set_xlim(0, 300)
-	self.axcolumn.set_ylim(gapcolumn,self.imageres[1] - gapcolumn)
+	self.axcolumn.set_ylim(self.gapcolumn,self.imageres[1] - self.gapcolumn)
+
 
     def coursen(self, xdata,ydata,points):
         newlength = int(len(xdata)/points)
@@ -321,9 +354,9 @@ class proflayout(QtGui.QWidget):
         	newxdata.append(xdata[int((i + j)/2)])
         	j = i
     	return np.array(newxdata), np.array(newydata)
-
-
-
+	
+    def closeEvent(self, x):
+	self.camera.close()
 
 if __name__ == "__main__":
 
