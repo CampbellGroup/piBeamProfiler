@@ -117,8 +117,8 @@ class proflayout(QtGui.QWidget):
             layout.addWidget(self.zoominbutton, 0, 3)
             layout.addWidget(self.zoomoutbutton, 0, 2)
             layout.addWidget(self.expslider, 0, 5, 2, 1)
-        layout.addWidget(self.xwaist, 2, 1)
-        layout.addWidget(self.ywaist, 3, 1)
+        layout.addWidget(self.xwaist, 2, 1, 1, 3)
+        layout.addWidget(self.ywaist, 3, 1, 1, 3)
 
         self.setLayout(layout)
 
