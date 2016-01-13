@@ -135,7 +135,7 @@ class proflayout(QtGui.QWidget):
             np.nan_to_num(image)
 
             # take the green part of the image
-            greenimage = image[:,:,1]
+            greenimage = image[:, :, 1]
             globmax = np.max(greenimage)
 
             # row and colum sum for live plots
@@ -343,7 +343,7 @@ class proflayout(QtGui.QWidget):
         self.axrow.set_ylim(0, 300)
 
         self.axcolumn.set_xlim(0, 300)
-        self.axcolumn.set_ylim(self.gapcolumn,self.imageres[1] - self.gapcolumn)
+        self.axcolumn.set_ylim(self.gapcolumn, self.imageres[1] - self.gapcolumn)
 
     def coarsen(self, xdata, ydata, points):
         newlength = int(len(xdata)/points)
