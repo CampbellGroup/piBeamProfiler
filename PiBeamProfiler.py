@@ -23,21 +23,23 @@ from PyQt4 import QtGui, QtCore
 import numpy as np
 from scipy.misc.pilutil import toimage
 from scipy.optimize import curve_fit
-import time, sys
+import time
+import sys
 import cv2
+
 
 class proflayout(QtGui.QWidget):
 
     def __init__(self):
         super(proflayout, self).__init__()
-        self.imageres = [640,480]
+        self.imageres = [640, 480]
         self.zoom = 1
         self.getzoomgaps()
         self.fitting = True
         self.breakloop = False
         desktop = QtGui.QDesktopWidget()
         screensize = desktop.availableGeometry()
-        self.screenres = [screensize.width(),screensize.height()]
+        self.screenres = [screensize.width(), screensize.height()]
         self.initCamera()
         self.initializeGUI()
 
@@ -52,7 +54,8 @@ class proflayout(QtGui.QWidget):
         self.camera.iso = 300
 
         # grab a reference to the raw camera capture
-        self.rawCapture = PiRGBArray(self.camera, size=(self.imageres[0], self.imageres[1]))
+        self.rawCapture = PiRGBArray(self.camera, size=(self.imageres[0],
+                                                        self.imageres[1]))
 
         # allow the camera to warmup
         time.sleep(0.1)
@@ -76,20 +79,21 @@ class proflayout(QtGui.QWidget):
 
         self.xwaist = QtGui.QLabel()
         self.ywaist = QtGui.QLabel()
-        self.xwaist.setStyleSheet('color: #FF6600; font-weight: bold; font-family: Copperplate / Copperplate Gothic Light, sans-serif')
-        self.ywaist.setStyleSheet('color: #FF6600; font-weight: bold; font-family: Copperplate / Copperplate Gothic Light, sans-serif')
+        font = 'color: #FF6600; font-weight: bold; font-family: Copperplate / Copperplate Gothic Light, sans-serif'
+        self.xwaist.setStyleSheet(font)
+        self.ywaist.setStyleSheet(font)
         self.zoominbutton = QtGui.QPushButton('Zoom In')
         self.zoomoutbutton = QtGui.QPushButton('Zoom Out')
-        buttonsize = [int(self.screenres[1]/8 ), int(self.screenres[1]/4)]
+        buttonsize = [int(self.screenres[1]/8), int(self.screenres[1]/4)]
         self.highresbutton = QtGui.QPushButton('1296x972')
         self.lowresbutton = QtGui.QPushButton('640x480')
         self.highresbutton.setCheckable(True)
         self.lowresbutton.setCheckable(True)
         self.lowresbutton.setChecked(True)
-        self.highresbutton.setFixedSize(buttonsize[0],buttonsize[1])
-        self.lowresbutton.setFixedSize(buttonsize[0],buttonsize[1])
-        self.zoominbutton.setFixedSize(buttonsize[0],buttonsize[1])
-        self.zoomoutbutton.setFixedSize(buttonsize[0],buttonsize[1])
+        self.highresbutton.setFixedSize(buttonsize[0], buttonsize[1])
+        self.lowresbutton.setFixedSize(buttonsize[0], buttonsize[1])
+        self.zoominbutton.setFixedSize(buttonsize[0], buttonsize[1])
+        self.zoomoutbutton.setFixedSize(buttonsize[0], buttonsize[1])
         self.zoominbutton.toggled.connect(self.zoomin)
         self.setupPlots()
         self.canvasrow = FigureCanvas(self.figurerow)
@@ -101,34 +105,35 @@ class proflayout(QtGui.QWidget):
         self.lowresbutton.clicked.connect(self.lowres)
         self.highresbutton.clicked.connect(self.highres)
 
-        layout.addWidget(self.videowindow,   0,0,2,1)
-        layout.addWidget(self.canvasrow,     2,0,2,1)
-        layout.addWidget(self.canvascolumn,  0,1,2,1)
-        layout.addWidget(self.expbar,        0,4,2,1)
+        layout.addWidget(self.videowindow, 0, 0, 2, 1)
+        layout.addWidget(self.canvasrow, 2, 0, 2, 1)
+        layout.addWidget(self.canvascolumn, 0, 1, 2, 1)
+        layout.addWidget(self.expbar, 0, 4, 2, 1)
         # withholds these widgets for tiny screens
         print self.screenres
         if not ((self.screenres[0] or self.screenres[1]) <= 400):
-            layout.addWidget(self.lowresbutton,  1,2)
-            layout.addWidget(self.highresbutton, 1,3)
-            layout.addWidget(self.zoominbutton,  0,3)
-            layout.addWidget(self.zoomoutbutton, 0,2)
-            layout.addWidget(self.expslider,     0,5,2,1)
-        layout.addWidget(self.xwaist,        2,1)
-        layout.addWidget(self.ywaist,        3,1)
+            layout.addWidget(self.lowresbutton, 1, 2)
+            layout.addWidget(self.highresbutton, 1, 3)
+            layout.addWidget(self.zoominbutton, 0, 3)
+            layout.addWidget(self.zoomoutbutton, 0, 2)
+            layout.addWidget(self.expslider, 0, 5, 2, 1)
+        layout.addWidget(self.xwaist, 2, 1)
+        layout.addWidget(self.ywaist, 3, 1)
 
         self.setLayout(layout)
 
     def startCamera(self):
         # capture frames from the camera
 
-        for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
+        for frame in self.camera.capture_continuous(self.rawCapture,
+                                                    format="bgr",
+                                                    use_video_port=True):
 
-            #start = time.time()
+            # start = time.time()
 
             # grab the raw NumPy array representing the imagef
             image = frame.array
             np.nan_to_num(image)
-
 
             # take the green part of the image
             greenimage = image[:,:,1]
@@ -163,103 +168,111 @@ class proflayout(QtGui.QWidget):
             courserowx = np.nan_to_num(courserowx)
             columnampguess = coursecolumnx.max()
             columncenterguess = np.argmax(coursecolumnx)
-            #print 'init matrix time = ', time.time() - start
-            #start = time.time()
-            if self.fitting == True:
+            # print 'init matrix time = ', time.time() - start
+            # start = time.time()
+            if self.fitting is True:
                 try:
-                    popt1, pcov1 = curve_fit(self.func, courserowx,courserowy, p0=[rowampguess,rowcenterguess,200])
+                    p0 = [rowampguess, rowcenterguess, 200]
+                    popt1, pcov1 = curve_fit(self.func, courserowx, courserowy,
+                                             p0=p0)
                 except:
-                    popt1 = [0,0,1]
+                    popt1 = [0, 0, 1]
 
                 try:
-                    popt2, pcov2 = curve_fit(self.func, coursecolumny, coursecolumnx, p0=[columnampguess,columncenterguess,200])
+                    p0 = [columnampguess, columncenterguess, 200]
+                    popt2, pcov2 = curve_fit(self.func, coursecolumny,
+                                             coursecolumnx, p0=p0)
                 except:
-                    popt2 = [0,0,1]
+                    popt2 = [0, 0, 1]
             else:
-                popt1, popt2 = [[0,0,1],[0,0,1]]
+                popt1, popt2 = [[0, 0, 1], [0, 0, 1]]
 
-            #print 'fitting time = ', time.time() - start
+            # print 'fitting time = ', time.time() - start
 
-            #start = time.time()
-            #print (popt1[0] - rowampguess), popt1[1] - rowcenterguess
-            #print (popt2[0] - columnampguess), popt2[1] - columncenterguess
-            #updates data for row and column plots, also mirrors column data
+            # start = time.time()
+            # print (popt1[0] - rowampguess), popt1[1] - rowcenterguess
+            # print (popt2[0] - columnampguess), popt2[1] - columncenterguess
+            # updates data for row and column plots, also mirrors column data
             self.linesrow.set_xdata(courserowx)
             self.linesrow.set_ydata(courserowy)
 
             self.linescolumn.set_xdata(coursecolumnx)
             self.linescolumn.set_ydata(coursecolumny)
 
-            #updates data for fit row and column plots
+            # updates data for fit row and column plots
 
             self.linesrowfit.set_xdata(courserowx)
-            self.linesrowfit.set_ydata(self.func(courserowx, popt1[0],popt1[1],popt1[2]))
+            y_data = self.func(courserowx, popt1[0], popt1[1], popt1[2])
+            self.linesrowfit.set_ydata(y_data)
 
-            self.linescolumnfit.set_xdata(self.func(coursecolumny, popt2[0],popt2[1],popt2[2]))
+            x_data = self.func(coursecolumny, popt2[0], popt2[1], popt2[2])
+            self.linescolumnfit.set_xdata(x_data)
             self.linescolumnfit.set_ydata(coursecolumny)
 
-            #self.linescolumnfit.set_xdata(coursecolumnx)
-            #self.linescolumnfit.set_ydata(coursecolumny)
+            # self.linescolumnfit.set_xdata(coursecolumnx)
+            # self.linescolumnfit.set_ydata(coursecolumny)
 
-            #self.linesrowfit.set_xdata(courserowx)
-            #self.linesrowfit.set_ydata(courserowy)
+            # self.linesrowfit.set_xdata(courserowx)
+            # self.linesrowfit.set_ydata(courserowy)
 
-            #draw data and flush
+            # draw data and flush
             self.figurerow.canvas.draw()
             self.figurerow.canvas.flush_events()
 
             self.figurecolumn.canvas.draw()
             self.figurecolumn.canvas.flush_events()
 
-            #update X and Y waist labels with scaled waists
+            # update X and Y waist labels with scaled waists
             if self.imageres[0] == 640:
                 f = 2
             else:
-                f=1
-            self.xwaist.setText('X = ' + str(np.abs(popt1[2]*2*5.875*f))[0:5] + 'um')
-            self.ywaist.setText('Y = ' +str(np.abs(popt2[2]*2*5.875*f))[0:5]  + 'um')
+                f = 1
+            x_text = 'X = ' + str(np.abs(popt1[2]*2*5.875*f))[0:5] + 'um'
+            self.xwaist.setText(x_text)
+            y_text = 'Y = ' + str(np.abs(popt2[2]*2*5.875*f))[0:5] + 'um'
+            self.ywaist.setText(y_text)
 
-            #print 'updating plots = ', time.time() - start
+            # print 'updating plots = ', time.time() - start
 
-            #start = time.time()
+            # start = time.time()
 
             # convert RGB image np array to qPixmap and update canvas widget
             image = image[int(self.gaprow):self.imageres[0] - int(self.gaprow),int(self.gapcolumn):self.imageres[1] - int(self.gapcolumn)]
             qPixmap = self.nparrayToQPixmap(image)
             videoy = int(self.screenres[0]/2.1)
             videox = int(1.333 * videoy)
-            self.videowindow.setPixmap(qPixmap.scaled(videox,videoy))
+            self.videowindow.setPixmap(qPixmap.scaled(videox, videoy))
 
             # clear the stream in preparation for the next frame
             self.rawCapture.truncate(0)
-            #print 'image updating = ', time.time() - start
+            # print 'image updating = ', time.time() - start
 
     def createPlots(self):
 
-        #Set up plot axes and figure positions
+        # Set up plot axes and figure positions
         self.figurerow, self.axrow = plt.subplots()
-        #self.figurerow.gca().set_position([0,0,1,1])
+        # self.figurerow.gca().set_position([0,0,1,1])
 
         self.figurecolumn, self.axcolumn = plt.subplots()
-        #self.figurecolumn.gca().set_position([0,0,1,1])
+        # self.figurecolumn.gca().set_position([0,0,1,1])
 
-        #Create line objects for fast plot redrawing
-        self.linesrow, = self.axrow.plot([],[],linewidth=2,color='purple')
-        self.linesrowfit, = self.axrow.plot([],[],linestyle='--',linewidth=2,color='yellow')
+        # Create line objects for fast plot redrawing
+        self.linesrow, = self.axrow.plot([], [], linewidth=2, color='purple')
+        self.linesrowfit, = self.axrow.plot([], [], linestyle='--', linewidth=2, color='yellow')
 
-        self.linescolumn, = self.axcolumn.plot([],[],linewidth=2,color='purple')
-        self.linescolumnfit, = self.axcolumn.plot([],[],linestyle='--',linewidth=2,color='yellow')
+        self.linescolumn, = self.axcolumn.plot([], [], linewidth=2, color='purple')
+        self.linescolumnfit, = self.axcolumn.plot([], [], linestyle='--', linewidth=2, color='yellow')
 
     def setupPlots(self):
 
-        self.xpixels = np.linspace(0,self.imageres[0],self.imageres[0])
-        self.ypixels = np.linspace(0,self.imageres[1],self.imageres[1])
+        self.xpixels = np.linspace(0, self.imageres[0], self.imageres[0])
+        self.ypixels = np.linspace(0, self.imageres[1], self.imageres[1])
 
         self.axrow.set_xlim(0, self.imageres[0])
-        self.axrow.set_ylim(0,300)
+        self.axrow.set_ylim(0, 300)
 
         self.axcolumn.set_xlim(0, 300)
-        self.axcolumn.set_ylim(0,self.imageres[1])
+        self.axcolumn.set_ylim(0, self.imageres[1])
 
         self.axrow.xaxis.set_ticks_position('none')
         self.axrow.yaxis.set_ticks_position('none')
@@ -277,11 +290,11 @@ class proflayout(QtGui.QWidget):
         scaledvalue = 0.5 * value**2 + 1
         self.camera.shutter_speed = int(scaledvalue)
 
-    #gaussian function used in fitting routine
+    # gaussian function used in fitting routine
     def func(self, x, a, x0, sigma):
         return a*np.exp(-(x-x0)**2/(2*sigma**2))
 
-    #converts nparray to qpixmap
+    # converts nparray to qpixmap
     def nparrayToQPixmap(self, arrayImage):
         pilImage = toimage(arrayImage)
         qtImage = ImageQt(pilImage)
@@ -289,7 +302,7 @@ class proflayout(QtGui.QWidget):
         qPixmap = QtGui.QPixmap(qImage)
         return qPixmap
 
-    #to be added
+    # to be added
     def zoomin(self):
         if self.zoom >= 10:
             self.zoom = 10
@@ -317,7 +330,7 @@ class proflayout(QtGui.QWidget):
     def highres(self):
         self.lowresbutton.setChecked(False)
         self.breakloop = True
-        self.imageres = [1296,972]
+        self.imageres = [1296, 972]
         time.sleep(1)
         self.camera.close()
         self.setupPlots()
@@ -331,13 +344,12 @@ class proflayout(QtGui.QWidget):
     def resizePlots(self):
         self.getzoomgaps()
         self.axrow.set_xlim(self.gaprow, self.imageres[0] - self.gaprow)
-        self.axrow.set_ylim(0,300)
+        self.axrow.set_ylim(0, 300)
 
         self.axcolumn.set_xlim(0, 300)
         self.axcolumn.set_ylim(self.gapcolumn,self.imageres[1] - self.gapcolumn)
 
-
-    def coursen(self, xdata,ydata,points):
+    def coursen(self, xdata, ydata, points):
         newlength = int(len(xdata)/points)
         newxdata = []
         newydata = []
@@ -359,5 +371,3 @@ if __name__ == "__main__":
     proflayoutwidget.show()
     proflayoutwidget.startCamera()
     sys.exit(a.exec_())
-
-
