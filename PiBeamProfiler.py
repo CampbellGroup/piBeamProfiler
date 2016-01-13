@@ -166,14 +166,14 @@ class proflayout(QtGui.QWidget):
             if self.fitting is True:
                 try:
                     p0 = [rowampguess, rowcenterguess, 200]
-                    popt1, pcov1 = curve_fit(self.func, coarserowx, coarserowy,
-                                             p0=p0)
+                    popt1, pcov1 = curve_fit(self.gaussian, coarserowx,
+                                             coarserowy, p0=p0)
                 except:
                     popt1 = [0, 0, 1]
 
                 try:
                     p0 = [columnampguess, columncenterguess, 200]
-                    popt2, pcov2 = curve_fit(self.func, coarsecolumny,
+                    popt2, pcov2 = curve_fit(self.gaussian, coarsecolumny,
                                              coarsecolumnx, p0=p0)
                 except:
                     popt2 = [0, 0, 1]
@@ -190,10 +190,10 @@ class proflayout(QtGui.QWidget):
             # updates data for fit row and column plots
 
             self.linesrowfit.set_xdata(coarserowx)
-            y_data = self.func(coarserowx, popt1[0], popt1[1], popt1[2])
+            y_data = self.gaussian(coarserowx, popt1[0], popt1[1], popt1[2])
             self.linesrowfit.set_ydata(y_data)
 
-            x_data = self.func(coarsecolumny, popt2[0], popt2[1], popt2[2])
+            x_data = self.gaussian(coarsecolumny, popt2[0], popt2[1], popt2[2])
             self.linescolumnfit.set_xdata(x_data)
             self.linescolumnfit.set_ydata(coarsecolumny)
 
@@ -205,13 +205,12 @@ class proflayout(QtGui.QWidget):
             self.figurecolumn.canvas.flush_events()
 
             # update X and Y waist labels with scaled waists
-            if self.imageres[0] == 640:
-                f = 2
-            else:
-                f = 1
-            x_text = 'X = ' + str(np.abs(popt1[2]*2*5.875*f))[0:5] + 'um'
+            x_diameter = self.get_beam_diameter(w_I=popt1[2])
+            text_ending = 'um, 1/e**2 Int. diam.'
+            x_text = 'X = ' + str(x_diameter)[0:5] + text_ending
             self.xwaist.setText(x_text)
-            y_text = 'Y = ' + str(np.abs(popt2[2]*2*5.875*f))[0:5] + 'um'
+            y_diameter = self.get_beam_diameter(w_I=popt2[2])
+            y_text = 'Y = ' + str(y_diameter)[0:5] + text_ending
             self.ywaist.setText(y_text)
 
             # convert RGB image np array to qPixmap and update canvas widget
@@ -223,6 +222,27 @@ class proflayout(QtGui.QWidget):
 
             # clear the stream in preparation for the next frame
             self.rawCapture.truncate(0)
+
+    def get_beam_diameter(self, w_I):
+        """
+        Return the 1/e**2 beam diameter in micrometers.
+
+        Parameters
+        ----------
+        w_I: float, the 1/e beam radius in pixels
+
+        Returns
+        -------
+        float
+        """
+        # Scale the waist size according to the resolution setting
+        if self.imageres[0] == 640:
+            res_factor = 2
+        else:
+            res_factor = 1
+        pix_to_um = 5.875
+        beam_diameter = np.abs(2. * np.sqrt(2.) * w_I * pix_to_um * res_factor)
+        return beam_diameter
 
     def createPlots(self):
 
@@ -265,9 +285,22 @@ class proflayout(QtGui.QWidget):
         scaledvalue = 0.5 * value**2 + 1
         self.camera.shutter_speed = int(scaledvalue)
 
-    # gaussian function used in fitting routine
-    def func(self, x, a, x0, sigma):
-        return a*np.exp(-(x-x0)**2/(2*sigma**2))
+    def gaussian(self, x, a, x0, w_I):
+        """
+        Gaussian profile function used in fitting routine.
+
+        Parameters
+        ----------
+        x: float, abscissa
+        a: float, amplitude coefficient
+        x0: float, center
+        w_I: float, 1/e intensity radius in pixels
+
+        Returns
+        -------
+        float
+        """
+        return a*np.exp(-(x-x0)**2/(w_I**2))
 
     # converts nparray to qpixmap
     def nparrayToQPixmap(self, arrayImage):
