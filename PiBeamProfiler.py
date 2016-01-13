@@ -128,8 +128,6 @@ class proflayout(QtGui.QWidget):
                                                     format="bgr",
                                                     use_video_port=True):
 
-            # start = time.time()
-
             # grab the raw NumPy array representing the imagef
             image = frame.array
             np.nan_to_num(image)
@@ -164,8 +162,7 @@ class proflayout(QtGui.QWidget):
             coarserowx = np.nan_to_num(coarserowx)
             columnampguess = coarsecolumnx.max()
             columncenterguess = np.argmax(coarsecolumnx)
-            # print 'init matrix time = ', time.time() - start
-            # start = time.time()
+
             if self.fitting is True:
                 try:
                     p0 = [rowampguess, rowcenterguess, 200]
@@ -183,11 +180,6 @@ class proflayout(QtGui.QWidget):
             else:
                 popt1, popt2 = [[0, 0, 1], [0, 0, 1]]
 
-            # print 'fitting time = ', time.time() - start
-
-            # start = time.time()
-            # print (popt1[0] - rowampguess), popt1[1] - rowcenterguess
-            # print (popt2[0] - columnampguess), popt2[1] - columncenterguess
             # updates data for row and column plots, also mirrors column data
             self.linesrow.set_xdata(coarserowx)
             self.linesrow.set_ydata(coarserowy)
@@ -204,12 +196,6 @@ class proflayout(QtGui.QWidget):
             x_data = self.func(coarsecolumny, popt2[0], popt2[1], popt2[2])
             self.linescolumnfit.set_xdata(x_data)
             self.linescolumnfit.set_ydata(coarsecolumny)
-
-            # self.linescolumnfit.set_xdata(coarsecolumnx)
-            # self.linescolumnfit.set_ydata(coarsecolumny)
-
-            # self.linesrowfit.set_xdata(coarserowx)
-            # self.linesrowfit.set_ydata(coarserowy)
 
             # draw data and flush
             self.figurerow.canvas.draw()
@@ -228,10 +214,6 @@ class proflayout(QtGui.QWidget):
             y_text = 'Y = ' + str(np.abs(popt2[2]*2*5.875*f))[0:5] + 'um'
             self.ywaist.setText(y_text)
 
-            # print 'updating plots = ', time.time() - start
-
-            # start = time.time()
-
             # convert RGB image np array to qPixmap and update canvas widget
             image = image[int(self.gaprow):self.imageres[0] - int(self.gaprow),int(self.gapcolumn):self.imageres[1] - int(self.gapcolumn)]
             qPixmap = self.nparrayToQPixmap(image)
@@ -241,16 +223,13 @@ class proflayout(QtGui.QWidget):
 
             # clear the stream in preparation for the next frame
             self.rawCapture.truncate(0)
-            # print 'image updating = ', time.time() - start
 
     def createPlots(self):
 
         # Set up plot axes and figure positions
         self.figurerow, self.axrow = plt.subplots()
-        # self.figurerow.gca().set_position([0,0,1,1])
 
         self.figurecolumn, self.axcolumn = plt.subplots()
-        # self.figurecolumn.gca().set_position([0,0,1,1])
 
         # Create line objects for fast plot redrawing
         self.linesrow, = self.axrow.plot([], [], linewidth=2, color='purple')
