@@ -239,14 +239,31 @@ class proflayout(QtGui.QWidget):
         -------
         float
         """
-        # Scale the waist size according to the resolution setting
-        if self.imageres[0] == 640:
-            res_factor = 2
-        else:
-            res_factor = 1
-        pix_to_um = 5.875
-        beam_diameter = np.abs(2. * np.sqrt(2.) * w_I * pix_to_um * res_factor)
+        w_I_um = self.convert_scaled_pixels_to_um(value=w_I)
+        beam_diameter = np.abs(2. * np.sqrt(2.) * w_I_um)
         return beam_diameter
+
+    def convert_scaled_pixels_to_um(self, value):
+        """
+        Converts a camera pixel value that could be scaled by the resolution
+        to a value in micrometers.
+
+        Parameters
+        ----------
+        value: float, value in scaled pixels
+
+        Returns
+        -------
+        float
+        """
+        # Set the resolution scaling factor.
+        if self.imageres[0] == 640:
+            resolution_factor = 2
+        else:
+            resolution_factor = 1
+
+        pixels_to_um_conversion_factor = 5.875
+        return resolution_factor * pixels_to_um_conversion_factor * value
 
     def createPlots(self):
 
