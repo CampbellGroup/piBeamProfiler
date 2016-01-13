@@ -160,28 +160,28 @@ class proflayout(QtGui.QWidget):
 
             rowampguess = rowsum.max()
             rowcenterguess = np.argmax(columnsum)
-            coursecolumny, coursecolumnx = self.coursen(self.ypixels, columnsum, 3)
-            courserowx, courserowy = self.coursen(self.xpixels, rowsum, 3)
-            coursecolumny = np.nan_to_num(coursecolumny)
-            coursecolumnx = np.nan_to_num(coursecolumnx)
-            courserowy = np.nan_to_num(courserowy)
-            courserowx = np.nan_to_num(courserowx)
-            columnampguess = coursecolumnx.max()
-            columncenterguess = np.argmax(coursecolumnx)
+            coarsecolumny, coarsecolumnx = self.coarsen(self.ypixels, columnsum, 3)
+            coarserowx, coarserowy = self.coarsen(self.xpixels, rowsum, 3)
+            coarsecolumny = np.nan_to_num(coarsecolumny)
+            coarsecolumnx = np.nan_to_num(coarsecolumnx)
+            coarserowy = np.nan_to_num(coarserowy)
+            coarserowx = np.nan_to_num(coarserowx)
+            columnampguess = coarsecolumnx.max()
+            columncenterguess = np.argmax(coarsecolumnx)
             # print 'init matrix time = ', time.time() - start
             # start = time.time()
             if self.fitting is True:
                 try:
                     p0 = [rowampguess, rowcenterguess, 200]
-                    popt1, pcov1 = curve_fit(self.func, courserowx, courserowy,
+                    popt1, pcov1 = curve_fit(self.func, coarserowx, coarserowy,
                                              p0=p0)
                 except:
                     popt1 = [0, 0, 1]
 
                 try:
                     p0 = [columnampguess, columncenterguess, 200]
-                    popt2, pcov2 = curve_fit(self.func, coursecolumny,
-                                             coursecolumnx, p0=p0)
+                    popt2, pcov2 = curve_fit(self.func, coarsecolumny,
+                                             coarsecolumnx, p0=p0)
                 except:
                     popt2 = [0, 0, 1]
             else:
@@ -193,27 +193,27 @@ class proflayout(QtGui.QWidget):
             # print (popt1[0] - rowampguess), popt1[1] - rowcenterguess
             # print (popt2[0] - columnampguess), popt2[1] - columncenterguess
             # updates data for row and column plots, also mirrors column data
-            self.linesrow.set_xdata(courserowx)
-            self.linesrow.set_ydata(courserowy)
+            self.linesrow.set_xdata(coarserowx)
+            self.linesrow.set_ydata(coarserowy)
 
-            self.linescolumn.set_xdata(coursecolumnx)
-            self.linescolumn.set_ydata(coursecolumny)
+            self.linescolumn.set_xdata(coarsecolumnx)
+            self.linescolumn.set_ydata(coarsecolumny)
 
             # updates data for fit row and column plots
 
-            self.linesrowfit.set_xdata(courserowx)
-            y_data = self.func(courserowx, popt1[0], popt1[1], popt1[2])
+            self.linesrowfit.set_xdata(coarserowx)
+            y_data = self.func(coarserowx, popt1[0], popt1[1], popt1[2])
             self.linesrowfit.set_ydata(y_data)
 
-            x_data = self.func(coursecolumny, popt2[0], popt2[1], popt2[2])
+            x_data = self.func(coarsecolumny, popt2[0], popt2[1], popt2[2])
             self.linescolumnfit.set_xdata(x_data)
-            self.linescolumnfit.set_ydata(coursecolumny)
+            self.linescolumnfit.set_ydata(coarsecolumny)
 
-            # self.linescolumnfit.set_xdata(coursecolumnx)
-            # self.linescolumnfit.set_ydata(coursecolumny)
+            # self.linescolumnfit.set_xdata(coarsecolumnx)
+            # self.linescolumnfit.set_ydata(coarsecolumny)
 
-            # self.linesrowfit.set_xdata(courserowx)
-            # self.linesrowfit.set_ydata(courserowy)
+            # self.linesrowfit.set_xdata(coarserowx)
+            # self.linesrowfit.set_ydata(coarserowy)
 
             # draw data and flush
             self.figurerow.canvas.draw()
@@ -349,7 +349,7 @@ class proflayout(QtGui.QWidget):
         self.axcolumn.set_xlim(0, 300)
         self.axcolumn.set_ylim(self.gapcolumn,self.imageres[1] - self.gapcolumn)
 
-    def coursen(self, xdata, ydata, points):
+    def coarsen(self, xdata, ydata, points):
         newlength = int(len(xdata)/points)
         newxdata = []
         newydata = []
