@@ -25,7 +25,6 @@ from scipy.misc.pilutil import toimage
 from scipy.optimize import curve_fit
 import time
 import sys
-import cv2
 
 
 class proflayout(QtGui.QWidget):
@@ -138,9 +137,6 @@ class proflayout(QtGui.QWidget):
             # take the green part of the image
             greenimage = image[:,:,1]
             globmax = np.max(greenimage)
-
-            # cv2 thingy
-            key = cv2.waitKey(1) & 0xFF
 
             # row and colum sum for live plots
             columnsum = greenimage.sum(axis=1)/40.0
