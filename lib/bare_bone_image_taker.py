@@ -27,6 +27,7 @@ class PiBeamProfiler(object):
         self.camera_format = 'bgr'
         self.color = 'green'
         self.coarsen = False
+        self.counter = 0
 
     def run_beam_profiler(self):
         self._stream_video_and_fit()
@@ -72,12 +73,15 @@ class PiBeamProfiler(object):
         capture = self.camera.capture_continuous
         for raw_image in capture(self.current_frame, format=self.camera_format,
                                  use_video_port=True):
+            self.counter += 1
+            print self.counter
             # cv2 thingy
             self._bypass_cv2_keyboard_event()
             # prepare and fit incoming image
             array = self._convert_raw_image_to_numpy_array(raw_image)
             image = self._set_image_color(array)
             self.camera_image = image
+            self.print_image_info()
             # clear the stream in preparation for the next frame
             self._clear_current_image()
 
@@ -109,5 +113,9 @@ class PiBeamProfiler(object):
     def _clear_current_image(self):
         self.current_frame.truncate(0)
 
+    def print_image_info(self):
+        print "image shape:", self.camera_image.shape
+
     def close_camera(self):
         self.camera.close()
+
