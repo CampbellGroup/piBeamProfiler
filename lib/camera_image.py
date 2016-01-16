@@ -55,7 +55,7 @@ class CameraImage(object):
             self._column_center_guess, self._beam_diameter_guess)
 
         self.column_amp, self.column_center, self.column_width = column_fit
-        self.column_sum_fit = _functions._gaussian(self.column_positions,
+        self.column_sum_fit = _functions._gaussian(_n.array(self.column_positions),
                                                    *column_fit)
 
         row_fit = _functions.fit_gaussian(
@@ -63,4 +63,4 @@ class CameraImage(object):
             self._row_center_guess, self._beam_diameter_guess)
 
         self.row_amp, self.row_center, self.row_width = row_fit
-        self.row_sum_fit = _functions._gaussian(self.row_positions, *row_fit)
+        self.row_sum_fit = _functions._gaussian(_n.array(self.row_positions), *row_fit)

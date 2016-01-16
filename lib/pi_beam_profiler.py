@@ -1,7 +1,9 @@
 import picamera as _picamera
+import picamera.array as _array
 import time as _time
 import numpy as _n
 import camera_image as _ci
+import cv2 as _cv2
 
 
 class PiBeamProfiler(object):
@@ -45,7 +47,7 @@ class PiBeamProfiler(object):
         self.camera.exposure_mode = 'off'
         self.camera.iso = 300
         # grab a reference to the raw camera capture
-        rgbarray = _picamera.array.PiRGBArray
+        rgbarray = _array.PiRGBArray
         self.current_frame = rgbarray(self.camera, size=self.camera_resolution)
         # allow the camera to warmup
         _time.sleep(0.1)

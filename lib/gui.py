@@ -5,7 +5,7 @@ import numpy as np
 from PIL.ImageQt import ImageQt
 from scipy.misc.pilutil import toimage
 import sys
-import pi_beam_profiler.lib.pi_beam_profiler as pi_beam_profiler
+import pi_beam_profiler as _pi_beam_profiler
 import matplotlib.backends.backend_qt4agg as _qt4agg
 FigureCanvas = _qt4agg.FigureCanvasQTAgg
 
@@ -14,8 +14,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def __init__(self):
         super(PiBeamProfilerGUI, self).__init__()
         self.set_parameters()
-        self.initilize_beam_profiler()
-        self.initilize_gui()
+        self.initialize_beam_profiler()
+        self.initialize_gui()
 
     def set_parameters(self):
         self.zoom = 0
@@ -27,7 +27,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.breakloop = False
 
     def initialize_beam_profiler(self):
-        self.profiler = pi_beam_profiler.PiBeamProfiler()
+        self.profiler = _pi_beam_profiler.PiBeamProfiler()
         self.profiler.initialize_camera()
         self.column_count, self.row_count = self.profiler.camera_resolution
         self.column_positions = np.linspace(
@@ -35,10 +35,10 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.row_positions = np.linspace(0, self.row_count-1, self.row_count)
 
     def initialize_gui(self):
-        self.setWindowTitle('Beam Profiler')
-        self.setGeometry(0, 0, *self.monitor_screen_resolution)
         self.get_image_boundaries()
         self.get_screen_resolution()
+        self.setWindowTitle('Beam Profiler')
+        self.setGeometry(0, 0, *self.monitor_screen_resolution)
         self.make_widgets()
         self.setup_layout()
 
