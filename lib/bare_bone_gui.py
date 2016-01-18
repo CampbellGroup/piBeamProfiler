@@ -29,6 +29,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def initialize_beam_profiler(self):
         self.profiler = _pi_beam_profiler.PiBeamProfiler()
+        # self.profiler.color = 'red'
         self.profiler.initialize_camera()
         self.column_count, self.row_count = self.profiler.camera_resolution
         self.column_positions = np.linspace(
@@ -231,14 +232,19 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         capture = self.profiler.camera.capture_continuous
         current_frame = self.profiler.current_frame
         camera_format = self.profiler.camera_format
+        self.counter = 0
         for raw_image in capture(current_frame, format=camera_format,
                                  use_video_port=True):
             # cv2 thingy
             self._bypass_cv2_keyboard_event()
+            self.counter +=1
             self.profiler.fit_an_image(raw_image)
             # clear the stream in preparation for the next frame
             current_frame.truncate(0)
-            self.update_video
+            self.fetch_data()
+            self.update_video()
+            if self.counter == 20:
+                self.plot()
 
     def _bypass_cv2_keyboard_event(self):
         """
@@ -262,10 +268,23 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         image = self.camera_image
         array = image[self.min_row_index: self.max_row_index,
                       self.min_column_index: self.max_column_index]
+        print array[50][50]
         qPixmap = self.nparrayToQPixmap(array)
         videoy = int(self.monitor_screen_resolution[0]/self.image_scale_factor)
         videox = int(self.image_h_to_v_conversion_factor * videoy)
         self.video_window.setPixmap(qPixmap.scaled(videox, videoy))
+
+    def plot(self):
+        image = self.camera_image
+        array = image[self.min_row_index: self.max_row_index,
+                      self.min_column_index: self.max_column_index]
+        qPixmap = self.nparrayToQPixmap(array)
+        videoy = int(self.monitor_screen_resolution[0]/self.image_scale_factor)
+        videox = int(self.image_h_to_v_conversion_factor * videoy)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.imshow(array)
+        
 
     def nparrayToQPixmap(self, array):
         pil_image = toimage(array)
@@ -312,5 +331,6 @@ if __name__ == "__main__":
     a = QtGui.QApplication([])
     profilerwidget = PiBeamProfilerGUI()
     profilerwidget.show()
+    a.processEvents()
     profilerwidget.run_beam_profiler()
     sys.exit(a.exec_())
