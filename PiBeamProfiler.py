@@ -350,16 +350,15 @@ class proflayout(QtGui.QWidget):
         self.highresbutton.setChecked(False)
         self.breakloop = True
         self.imageres = [640, 480]
-        time.sleep(1)
-        self.camera.close()
-        self.setupPlots()
-        self.initCamera()
-        self.startCamera()
+        self._post_resolution_settings()
 
     def highres(self):
         self.lowresbutton.setChecked(False)
         self.breakloop = True
         self.imageres = [1296, 972]
+        self._post_resolution_settings()
+
+    def _post_resolution_settings(self):
         time.sleep(1)
         self.camera.close()
         self.setupPlots()
