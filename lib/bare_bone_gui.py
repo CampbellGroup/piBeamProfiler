@@ -90,8 +90,10 @@ class PiBeamProfilerGUI(QtGui.QWidget):
             # cv2 thingy
             self._bypass_cv2_keyboard_event()
             array = self._convert_raw_image_to_numpy_array(raw_image)
-            image = self._set_image_color(array)
-            self.camera_image = image
+            self.camera_image = array
+            self.counter += 1
+            if self.counter == 10:
+                np.save('3color.npy', array)
             self.update_video()
 
     def update_video(self):
