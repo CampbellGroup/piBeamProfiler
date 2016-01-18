@@ -240,9 +240,10 @@ class PiBeamProfilerGUI(QtGui.QWidget):
             self.camera_image = self.profiler.prepare_for_raw_image(raw_image)
             # clear the stream in preparation for the next frame
             current_frame.truncate(0)
-            self.update_GUI()
+            self.update_video()
 
     def update_GUI(self):
+        self.fetch_data()
         self.update_video()
         self.update_column_and_row_sum_figures()
         self.update_beam_diameter_information()
@@ -311,13 +312,17 @@ class CameraDisplay(QtGui.QLabel):
         self.update_frame(self.image)
 
     def update_video(self, image):
+        print image[50][50]
+        self.update_image(image)
         self.counter += 1
         print "Counter = ", self.counter
-        self.update_frame(image)
+        if self.counter == 10:
+            np.savetxt('image', image, fmt="%1.3f", delimiter=",")
+        self.update_frame(self.image)
 
     def update_frame(self, image):
         qPixmap = self.nparrayToQPixmap(image)
-        self.setPixmap(qPixmap)
+        self.setPixmap(qPixmap.scaled(self.videox, self.videoy))
         self.repaint()
 #        self.show()
 
@@ -327,6 +332,9 @@ class CameraDisplay(QtGui.QLabel):
         q_image = QtGui.QImage(qt_image)
         qPixmap = QtGui.QPixmap(q_image)
         return qPixmap
+
+    def update_image(self, image):
+        self.image = image
 
 
 if __name__ == "__main__":
