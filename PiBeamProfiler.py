@@ -177,8 +177,8 @@ class proflayout(QtGui.QWidget):
 
                 try:
                     p0 = [columnampguess, columncenterguess, 200]
-                    popt2, pcov2 = curve_fit(self.gaussian, coarsecolumny,
-                                             coarsecolumnx, p0=p0)
+                    popt2, pcov2 = curve_fit(self.gaussian, coarsecolumnx,
+                                             coarsecolumny, p0=p0)
                 except:
                     popt2 = [0, 0, 1]
             else:
