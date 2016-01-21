@@ -278,8 +278,8 @@ class CameraDisplay(QtGui.QLabel):
         self.initialize_image()
 
     def set_image_resolution_from_scale(self):
-        width = self.monitor_screen_resolution[0]/self.image_scale
-        height = width * 3./4.  # adopt a 4:3 ratio for width and height
+        height = self.monitor_screen_resolution[1]/self.image_scale
+        width = height * 4./3.  # adopt a 4:3 ratio for width and height
         self.width = int(width)
         self.height = int(height)
 
