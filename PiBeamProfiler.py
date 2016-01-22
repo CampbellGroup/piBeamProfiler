@@ -157,11 +157,11 @@ class proflayout(QtGui.QWidget):
                     p0 = projection.p0
                     positions = projection.positions
                     values = projection.values
-                    popt1, pcov1 = curve_fit(self.gaussian, positions, values,
-                                             p0=p0)
+                    popt_row, pcov_r = curve_fit(self.gaussian, positions,
+                                                 values, p0=p0)
 
                 except:
-                    popt1 = [0, 0, 1]
+                    popt_row = [0, 0, 1]
 
                 try:
                     projection = column_projection
@@ -169,13 +169,13 @@ class proflayout(QtGui.QWidget):
                     positions = projection.positions
                     values = projection.values
                     p0 = p0
-                    popt2, pcov2 = curve_fit(self.gaussian, positions,
-                                             values, p0=p0)
+                    popt_col, pcov_c = curve_fit(self.gaussian, positions,
+                                                 values, p0=p0)
 
                 except:
-                    popt2 = [0, 0, 1]
+                    popt_col = [0, 0, 1]
             else:
-                popt1, popt2 = [[0, 0, 1], [0, 0, 1]]
+                popt_row, popt_col = [[0, 0, 1], [0, 0, 1]]
 
             # updates data for row and column plots, also mirrors column data
             self.linesrow.set_xdata(row_projection.positions)
@@ -185,15 +185,14 @@ class proflayout(QtGui.QWidget):
             self.linescolumn.set_ydata(column_projection.values)
 
             # updates data for fit row and column plots
-
             self.linesrowfit.set_xdata(row_projection.positions)
-            y_data = self.gaussian(row_projection.positions, popt1[0],
-                                   popt1[1], popt1[2])
+            y_data = self.gaussian(row_projection.positions, popt_row[0],
+                                   popt_row[1], popt_row[2])
 
             self.linesrowfit.set_ydata(y_data)
 
-            x_data = self.gaussian(column_projection.positions, popt2[0],
-                                   popt2[1], popt2[2])
+            x_data = self.gaussian(column_projection.positions, popt_col[0],
+                                   popt_col[1], popt_col[2])
 
             self.linescolumnfit.set_xdata(x_data)
             self.linescolumnfit.set_ydata(column_projection.positions)
@@ -206,11 +205,11 @@ class proflayout(QtGui.QWidget):
             self.figurecolumn.canvas.flush_events()
 
             # update X and Y waist labels with scaled waists
-            x_diameter = self.get_beam_diameter(w_I=popt1[2])
+            x_diameter = self.get_beam_diameter(w_I=popt_row[2])
             text_ending = 'um, 1/e**2 Int. diam.'
             x_text = 'X = ' + str(x_diameter)[0:5] + text_ending
             self.xwaist.setText(x_text)
-            y_diameter = self.get_beam_diameter(w_I=popt2[2])
+            y_diameter = self.get_beam_diameter(w_I=popt_col[2])
             y_text = 'Y = ' + str(y_diameter)[0:5] + text_ending
             self.ywaist.setText(y_text)
 
