@@ -26,6 +26,7 @@ from scipy.optimize import curve_fit
 import time
 import sys
 import cv2
+from image_projection import ImageProjection
 
 
 class proflayout(QtGui.QWidget):
@@ -139,67 +140,62 @@ class proflayout(QtGui.QWidget):
 
             # cv2 thingy
             key = cv2.waitKey(1) & 0xFF
-
-            # row and colum sum for live plots
-            columnsum = greenimage.sum(axis=1)/40.0
-            columnsum = columnsum[::-1]
-            rowsum = greenimage.sum(axis=0)/40.0
-
-            # subtract minumum value (background subtraction)
-            columnsum = columnsum - np.min(columnsum)
-            rowsum = rowsum - np.min(rowsum)
-            columnampguess = columnsum.max()
-            columncenterguess = np.argmax(columnsum)
-
-            rowampguess = rowsum.max()
-            rowcenterguess = np.argmax(rowsum)
             percexp = 100 * globmax/255.0
             self.expbar.setValue(percexp)
 
-            rowampguess = rowsum.max()
-            rowcenterguess = np.argmax(columnsum)
-            coarsecolumny, coarsecolumnx = self.coarsen(self.ypixels, columnsum, 3)
-            coarserowx, coarserowy = self.coarsen(self.xpixels, rowsum, 3)
-            coarsecolumny = np.nan_to_num(coarsecolumny)
-            coarsecolumnx = np.nan_to_num(coarsecolumnx)
-            coarserowy = np.nan_to_num(coarserowy)
-            coarserowx = np.nan_to_num(coarserowx)
-            columnampguess = coarsecolumnx.max()
-            columncenterguess = np.argmax(coarsecolumnx)
+            # Sum the image's column data to get the column_projection,
+            column_projection = ImageProjection(image=greenimage, axis=1,
+                                                pixels=self.ypixels)
+
+            # Likewise sum the row data to get the row_projection.
+            row_projection = ImageProjection(image=greenimage, axis=0,
+                                             pixels=self.xpixels)
 
             if self.fitting is True:
                 try:
-                    p0 = [rowampguess, rowcenterguess, 200]
-                    popt1, pcov1 = curve_fit(self.gaussian, coarserowx,
-                                             coarserowy, p0=p0)
+                    projection = row_projection
+                    p0 = projection.p0
+                    positions = projection.positions
+                    values = projection.values
+                    popt_row, pcov_r = curve_fit(self.gaussian, positions,
+                                                 values, p0=p0)
+
                 except:
-                    popt1 = [0, 0, 1]
+                    popt_row = [0, 0, 1]
 
                 try:
-                    p0 = [columnampguess, columncenterguess, 200]
-                    popt2, pcov2 = curve_fit(self.gaussian, coarsecolumny,
-                                             coarsecolumnx, p0=p0)
+                    projection = column_projection
+                    p0 = projection.p0
+                    positions = projection.positions
+                    values = projection.values
+                    p0 = p0
+                    popt_col, pcov_c = curve_fit(self.gaussian, positions,
+                                                 values, p0=p0)
+
                 except:
-                    popt2 = [0, 0, 1]
+                    popt_col = [0, 0, 1]
             else:
-                popt1, popt2 = [[0, 0, 1], [0, 0, 1]]
+                popt_row, popt_col = [[0, 0, 1], [0, 0, 1]]
 
             # updates data for row and column plots, also mirrors column data
-            self.linesrow.set_xdata(coarserowx)
-            self.linesrow.set_ydata(coarserowy)
+            self.linesrow.set_xdata(row_projection.positions)
+            self.linesrow.set_ydata(row_projection.values)
 
-            self.linescolumn.set_xdata(coarsecolumnx)
-            self.linescolumn.set_ydata(coarsecolumny)
+            self.linescolumn.set_xdata(column_projection.positions)
+            self.linescolumn.set_ydata(column_projection.values)
 
             # updates data for fit row and column plots
+            self.linesrowfit.set_xdata(row_projection.positions)
+            y_data = self.gaussian(row_projection.positions, popt_row[0],
+                                   popt_row[1], popt_row[2])
 
-            self.linesrowfit.set_xdata(coarserowx)
-            y_data = self.gaussian(coarserowx, popt1[0], popt1[1], popt1[2])
             self.linesrowfit.set_ydata(y_data)
 
-            x_data = self.gaussian(coarsecolumny, popt2[0], popt2[1], popt2[2])
+            x_data = self.gaussian(column_projection.positions, popt_col[0],
+                                   popt_col[1], popt_col[2])
+
             self.linescolumnfit.set_xdata(x_data)
-            self.linescolumnfit.set_ydata(coarsecolumny)
+            self.linescolumnfit.set_ydata(column_projection.positions)
 
             # draw data and flush
             self.figurerow.canvas.draw()
@@ -209,11 +205,11 @@ class proflayout(QtGui.QWidget):
             self.figurecolumn.canvas.flush_events()
 
             # update X and Y waist labels with scaled waists
-            x_diameter = self.get_beam_diameter(w_I=popt1[2])
+            x_diameter = self.get_beam_diameter(w_I=popt_row[2])
             text_ending = 'um, 1/e**2 Int. diam.'
             x_text = 'X = ' + str(x_diameter)[0:5] + text_ending
             self.xwaist.setText(x_text)
-            y_diameter = self.get_beam_diameter(w_I=popt2[2])
+            y_diameter = self.get_beam_diameter(w_I=popt_col[2])
             y_text = 'Y = ' + str(y_diameter)[0:5] + text_ending
             self.ywaist.setText(y_text)
 
@@ -350,16 +346,15 @@ class proflayout(QtGui.QWidget):
         self.highresbutton.setChecked(False)
         self.breakloop = True
         self.imageres = [640, 480]
-        time.sleep(1)
-        self.camera.close()
-        self.setupPlots()
-        self.initCamera()
-        self.startCamera()
+        self._post_resolution_settings()
 
     def highres(self):
         self.lowresbutton.setChecked(False)
         self.breakloop = True
         self.imageres = [1296, 972]
+        self._post_resolution_settings()
+
+    def _post_resolution_settings(self):
         time.sleep(1)
         self.camera.close()
         self.setupPlots()
