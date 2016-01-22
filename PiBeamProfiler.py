@@ -26,6 +26,7 @@ from scipy.optimize import curve_fit
 import time
 import sys
 import cv2
+from image_projection import ImageProjection
 
 
 class proflayout(QtGui.QWidget):
