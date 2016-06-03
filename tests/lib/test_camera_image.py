@@ -7,14 +7,14 @@ http://stackoverflow.com/questions/21566379/
 fitting-a-2d-gaussian-function-using-scipy-optimize-curve-fit-valueerror-and-m
 """
 import unittest as ut
-import pi_beam_profiler.lib.camera_image as c
+import pi_beam_profiler.lib.camera_image as _ci
 import numpy as np
 
 
 class TestMath(ut.TestCase):
     def setUp(self):
         image = self._prepare_image()
-        self.camera_image = c.CameraImage(image=image)
+        self.camera_image = _ci.CameraImage(image=image)
 
     def tearDown(self):
         self.camera_image = None
