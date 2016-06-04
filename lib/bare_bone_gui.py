@@ -229,6 +229,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def run_beam_profiler(self):
         self.profiler.run_beam_profiler()
         while self.profiler_running:
+            print "updating"
             self.update_GUI()
             time.sleep(self.update_image_time)
 
