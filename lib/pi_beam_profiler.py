@@ -26,21 +26,20 @@ class PiBeamProfiler(object):
         self.camera_format = 'bgr'
         self.color = 'green'
         self.coarsen = False
-        self.start_camera()
 
-    def start_camera(self):
-        self._initialize_camera()
+    def run_beam_profiler(self):
         self._stream_video_and_fit()
 
     def restart_camera(self):
         self.close_camera()
-        self.start_camera()
+        self.initialize_camera()
+        self.run_beam_profiler()
 
-    def _initialize_camera(self):
+    def initialize_camera(self):
         # initialize the camera
         self.camera = _picamera.PiCamera()
         # set camera resolution, gain , sutter speed and framerate
-        self.set_camera_resolution()
+        self._set_camera_resolution()
         self.camera.framerate = 33  # in Hz
         self.set_camera_shutter_speed(100)  # in us
         self.camera.exposure_mode = 'off'
@@ -51,7 +50,13 @@ class PiBeamProfiler(object):
         # allow the camera to warmup
         _time.sleep(0.1)
 
-    def set_camera_resolution(self):
+    def set_camera_resolution_mode(self, mode='low'):
+        if mode in ('low', 'high'):
+            self.resolution_mode = mode
+        else:
+            self.resolution_mode = 'low'
+
+    def _set_camera_resolution(self):
         if self.resolution_mode == 'high':
             self.camera_resolution = (1296, 972)
         else:
