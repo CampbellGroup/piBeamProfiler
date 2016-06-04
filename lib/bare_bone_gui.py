@@ -58,12 +58,12 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.monitor_screen_resolution = (width, height)
 
     def make_widgets(self):
-        self.make_column_and_row_sum_plots()
-        self.make_exposure_slider()
-        self.make_exposure_bar()
+        # self.make_column_and_row_sum_plots()
+        # self.make_exposure_slider()
+        # self.make_exposure_bar()
         self.make_video_window()
-        self.make_texts()
-        self.make_buttons()
+        # self.make_texts()
+        # self.make_buttons()
 
     def make_column_and_row_sum_plots(self):
         self.make_column_sum_plot()
@@ -210,19 +210,19 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def setup_layout(self):
         layout = QtGui.QGridLayout()
         layout.addWidget(self.video_window, 0, 0, 2, 1)
-        layout.addWidget(self.column_sum_canvas, 2, 0, 2, 1)
-        layout.addWidget(self.row_sum_canvas, 0, 1, 2, 1)
-        layout.addWidget(self.exposure_bar, 0, 4, 2, 1)
-        layout.addWidget(self.column_sum_waist_label, 2, 1, 1, 3)
-        layout.addWidget(self.row_sum_waist_label, 3, 1, 1, 3)
-
-        # withholds these widgets for tiny screens
-        if not any(side <= 400 for side in self.monitor_screen_resolution):
-            layout.addWidget(self.low_resolution_button, 1, 2)
-            layout.addWidget(self.high_resolution_button, 1, 3)
-            layout.addWidget(self.zoomin_button, 0, 3)
-            layout.addWidget(self.zoomout_button, 0, 2)
-            layout.addWidget(self.exposure_slider, 0, 5, 2, 1)
+#        layout.addWidget(self.column_sum_canvas, 2, 0, 2, 1)
+#        layout.addWidget(self.row_sum_canvas, 0, 1, 2, 1)
+#        layout.addWidget(self.exposure_bar, 0, 4, 2, 1)
+#        layout.addWidget(self.column_sum_waist_label, 2, 1, 1, 3)
+#        layout.addWidget(self.row_sum_waist_label, 3, 1, 1, 3)
+#
+#        # withholds these widgets for tiny screens
+#        if not any(side <= 400 for side in self.monitor_screen_resolution):
+#            layout.addWidget(self.low_resolution_button, 1, 2)
+#            layout.addWidget(self.high_resolution_button, 1, 3)
+#            layout.addWidget(self.zoomin_button, 0, 3)
+#            layout.addWidget(self.zoomout_button, 0, 2)
+#            layout.addWidget(self.exposure_slider, 0, 5, 2, 1)
 
         self.setLayout(layout)
 
