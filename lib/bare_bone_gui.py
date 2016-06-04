@@ -5,7 +5,7 @@ import numpy as np
 from PIL.ImageQt import ImageQt
 from scipy.misc.pilutil import toimage
 import sys
-import pi_beam_profiler as _pi_beam_profiler
+import bare_bone_image_taker as _pi_beam_profiler
 import matplotlib.backends.backend_qt4agg as _qt4agg
 FigureCanvas = _qt4agg.FigureCanvasQTAgg
 
