@@ -5,7 +5,15 @@ import camera_image as _ci
 
 
 class PiBeamProfiler(object):
-    """ beam profiler object for raspberry-pi. """
+    """
+    beam profiler object for raspberry-pi.
+
+    To use the beam profiler:
+
+    self.initialize_camera()
+    self.run_beam_profiler()
+
+    """
 
     def __init__(self):
         """
