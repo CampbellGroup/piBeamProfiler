@@ -2,7 +2,6 @@ import picamera as _picamera
 import picamera.array as _array
 import time as _time
 import numpy as _n
-import cv2 as _cv2
 
 
 class PiBeamProfiler(object):
@@ -27,9 +26,6 @@ class PiBeamProfiler(object):
         self.camera_format = 'bgr'
         self.color = 'green'
         self.coarsen = False
-
-    def run_beam_profiler(self):
-        self._stream_video_and_fit()
 
     def restart_camera(self):
         self.close_camera()
@@ -68,18 +64,11 @@ class PiBeamProfiler(object):
         """ Set shutter speed in us. """
         self.camera.shutter_speed = shutter_speed
 
-    def _stream_video_and_fit(self):
-        capture = self.camera.capture_continuous
-        for raw_image in capture(self.current_frame, format=self.camera_format,
-                                 use_video_port=True):
-            # cv2 thingy
-            self._bypass_cv2_keyboard_event()
-            # prepare and fit incoming image
-            array = self._convert_raw_image_to_numpy_array(raw_image)
-            image = self._set_image_color(array)
-            self.camera_image = image
-            # clear the stream in preparation for the next frame
-            self._clear_current_image()
+    def fit_an_image(self, raw_image):
+        # prepare and fit incoming image
+        array = self._convert_raw_image_to_numpy_array(raw_image)
+        image = self._set_image_color(array)
+        self.camera_image = image
 
     def _convert_raw_image_to_numpy_array(self, raw_image):
         array = _n.nan_to_num(raw_image.array)
@@ -97,14 +86,6 @@ class PiBeamProfiler(object):
         else:
             image = green_image
         return image
-
-    def _bypass_cv2_keyboard_event(self):
-        """
-        See http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_gui/
-        py_image_display/py_image_display.html
-        If waitKey(0) is passed then it waits indefinitely.
-        """
-        key = _cv2.waitKey(1) & 0xFF
 
     def _clear_current_image(self):
         self.current_frame.truncate(0)

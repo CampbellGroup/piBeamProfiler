@@ -8,6 +8,7 @@ import sys
 import bare_bone_image_taker as _pi_beam_profiler
 import matplotlib.backends.backend_qt4agg as _qt4agg
 FigureCanvas = _qt4agg.FigureCanvasQTAgg
+import cv2 as _cv2
 
 
 class PiBeamProfilerGUI(QtGui.QWidget):
@@ -227,11 +228,24 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.setLayout(layout)
 
     def run_beam_profiler(self):
-        self.profiler.run_beam_profiler()
-        while self.profiler_running:
-            print "updating"
+        capture = self.profiler.camera.capture_continuous
+        current_frame = self.profiler.current_frame
+        for raw_image in capture(current_frame, format=self.camera_format,
+                                 use_video_port=True):
+            # cv2 thingy
+            self._bypass_cv2_keyboard_event()
+            self.profiler.fit_an_image(raw_image)
+            # clear the stream in preparation for the next frame
+            self._clear_current_image()
             self.update_GUI()
-            time.sleep(self.update_image_time)
+
+    def _bypass_cv2_keyboard_event(self):
+        """
+        See http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_gui/
+        py_image_display/py_image_display.html
+        If waitKey(0) is passed then it waits indefinitely.
+        """
+        key = _cv2.waitKey(1) & 0xFF
 
     def update_GUI(self):
         self.fetch_data()
