@@ -230,7 +230,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def run_beam_profiler(self):
         capture = self.profiler.camera.capture_continuous
         current_frame = self.profiler.current_frame
-        for raw_image in capture(current_frame, format=self.camera_format,
+        camera_format = self.profiler.camera_format
+        for raw_image in capture(current_frame, format=camera_format,
                                  use_video_port=True):
             # cv2 thingy
             self._bypass_cv2_keyboard_event()
