@@ -237,7 +237,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
             self._bypass_cv2_keyboard_event()
             self.profiler.fit_an_image(raw_image)
             # clear the stream in preparation for the next frame
-            self._clear_current_image()
+            current_frame.truncate(0)
             self.update_GUI()
 
     def _bypass_cv2_keyboard_event(self):

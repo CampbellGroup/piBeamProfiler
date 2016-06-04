@@ -87,9 +87,6 @@ class PiBeamProfiler(object):
             image = green_image
         return image
 
-    def _clear_current_image(self):
-        self.current_frame.truncate(0)
-
     def close_camera(self):
         self.camera.close()
 
