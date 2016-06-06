@@ -311,14 +311,13 @@ class CameraDisplay(QtGui.QLabel):
         self.update_frame(self.image)
 
     def update_video(self, image):
-        self.update_image(image)
         self.counter += 1
         print "Counter = ", self.counter
-        self.update_frame(self.image)
+        self.update_frame(image)
 
     def update_frame(self, image):
         qPixmap = self.nparrayToQPixmap(image)
-        self.setPixmap(qPixmap.scaled(self.videox, self.videoy))
+        self.setPixmap(qPixmap)
         self.repaint()
 #        self.show()
 
@@ -328,9 +327,6 @@ class CameraDisplay(QtGui.QLabel):
         q_image = QtGui.QImage(qt_image)
         qPixmap = QtGui.QPixmap(q_image)
         return qPixmap
-
-    def update_image(self, image):
-        self.image = image
 
 
 if __name__ == "__main__":
