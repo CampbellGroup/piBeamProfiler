@@ -6,6 +6,8 @@ from PIL.ImageQt import ImageQt
 from scipy.misc.pilutil import toimage
 import sys
 import pi_beam_profiler as _pi_beam_profiler
+import camera_image as _ci
+import cv2 as _cv2
 import matplotlib.backends.backend_qt4agg as _qt4agg
 FigureCanvas = _qt4agg.FigureCanvasQTAgg
 
@@ -228,10 +230,22 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.setLayout(layout)
 
     def run_beam_profiler(self):
-        self.profiler.run_beam_profiler()
-        while self.profiler_running:
-            self.update_GUI()
-            time.sleep(self.update_image_time)
+        capture = self.profiler.camera.capture_continuous
+        current_frame = self.profiler.current_frame
+        camera_format = self.profiler.camera_format
+        self.counter = 0
+        for raw_image in capture(current_frame, format=camera_format,
+                                 use_video_port=True):
+            # cv2 thingy
+            self._bypass_cv2_keyboard_event()
+            # prepare and fit incoming image
+            array = self._convert_raw_image_to_numpy_array(raw_image)
+            image = self._set_image_color(array)
+            self.camera_image = _ci.CameraImage(image=image,
+                                                coarsen=self.coarsen)
+            # clear the stream in preparation for the next frame
+            current_frame.truncate(0)
+            self.update_video()
 
     def update_GUI(self):
         self.fetch_data()
@@ -239,25 +253,18 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.update_column_and_row_sum_figures()
         self.update_beam_diameter_information()
 
-    def fetch_data(self):
-        self.camera_image = self.profiler.camera_image
-
     def update_video(self):
         # convert RGB image np array to qPixmap and update canvas widget
         image = self.camera_image.image
-        array = image[self.min_row_index: self.max_row_index,
-                      self.min_column_index: self.max_column_index]
-        qPixmap = self.nparrayToQPixmap(array)
-        videoy = int(self.monitor_screen_resolution[0]/self.image_scale_factor)
-        videox = int(self.image_h_to_v_conversion_factor * videoy)
-        self.video_window.setPixmap(qPixmap.scaled(videox, videoy))
+        self.video_window.update_video(image)
 
-    def nparrayToQPixmap(self, array):
-        pil_image = toimage(array)
-        qt_image = ImageQt(pil_image)
-        q_image = QtGui.QImage(qt_image)
-        qPixmap = QtGui.QPixmap(q_image)
-        return qPixmap
+    def _bypass_cv2_keyboard_event(self):
+        """
+        See http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_gui/
+        py_image_display/py_image_display.html
+        If waitKey(0) is passed then it waits indefinitely.
+        """
+        key = _cv2.waitKey(1) & 0xFF
 
     def update_column_and_row_sum_figures(self):
         self.update_column_sum_figures()
