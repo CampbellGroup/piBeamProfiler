@@ -332,7 +332,7 @@ class CameraDisplay(QtGui.QLabel):
 if __name__ == "__main__":
     a = QtGui.QApplication([])
     profilerwidget = PiBeamProfilerGUI()
-    a.processEvents()
     profilerwidget.show()
+    a.processEvents()
     profilerwidget.run_beam_profiler()
     sys.exit(a.exec_())
