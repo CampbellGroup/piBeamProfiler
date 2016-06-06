@@ -64,10 +64,6 @@ class PiBeamProfiler(object):
         """ Set shutter speed in us. """
         self.camera.shutter_speed = shutter_speed
 
-    def _convert_raw_image_to_numpy_array(self, raw_image):
-        array = _n.nan_to_num(raw_image.array)
-        return array
-
     def _set_image_color(self, array):
         """ Pick color pixel to use for image. Default(green). """
         red_image = array[:, :, 0]

@@ -266,6 +266,10 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         """
         key = _cv2.waitKey(1) & 0xFF
 
+    def _convert_raw_image_to_numpy_array(self, raw_image):
+        array = np.nan_to_num(raw_image.array)
+        return array
+
     def update_column_and_row_sum_figures(self):
         self.update_column_sum_figures()
         self.update_row_sum_figures()
