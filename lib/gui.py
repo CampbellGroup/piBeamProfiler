@@ -250,8 +250,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def update_video(self):
         # convert RGB image np array to qPixmap and update canvas widget
         image = self.camera_image.image
-        image = image[self.min_row_index: self.max_row_index,
-                      self.min_column_index: self.max_column_index]
+#        image = image[self.min_row_index: self.max_row_index,
+#                      self.min_column_index: self.max_column_index]
         self.video_window.update_video(image)
 
     def _bypass_cv2_keyboard_event(self):
