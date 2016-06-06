@@ -2,6 +2,7 @@ import picamera as _picamera
 import picamera.array as _array
 import time as _time
 import numpy as _n
+import camera_image as _ci
 
 
 class PiBeamProfiler(object):
@@ -53,6 +54,12 @@ class PiBeamProfiler(object):
         else:
             self.resolution_mode = 'low'
 
+    def prepare_for_raw_image(self, raw_image):
+        array = self._convert_raw_image_to_numpy_array(raw_image)
+        image = self._set_image_color(array)
+        camera_image = _ci.CameraImage(image=image, coarsen=self.coarsen)
+        return camera_image
+
     def _set_camera_resolution(self):
         if self.resolution_mode == 'high':
             self.camera_resolution = (1296, 972)
@@ -63,6 +70,10 @@ class PiBeamProfiler(object):
     def set_camera_shutter_speed(self, shutter_speed):
         """ Set shutter speed in us. """
         self.camera.shutter_speed = shutter_speed
+
+    def _convert_raw_image_to_numpy_array(self, raw_image):
+        array = _n.nan_to_num(raw_image.array)
+        return array
 
     def _set_image_color(self, array):
         """ Pick color pixel to use for image. Default(green). """

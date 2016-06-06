@@ -6,7 +6,6 @@ from PIL.ImageQt import ImageQt
 from scipy.misc.pilutil import toimage
 import sys
 import pi_beam_profiler as _pi_beam_profiler
-import camera_image as _ci
 import cv2 as _cv2
 import matplotlib.backends.backend_qt4agg as _qt4agg
 FigureCanvas = _qt4agg.FigureCanvasQTAgg
@@ -238,11 +237,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
                                  use_video_port=True):
             # cv2 thingy
             self._bypass_cv2_keyboard_event()
-            # prepare and fit incoming image
-            array = self._convert_raw_image_to_numpy_array(raw_image)
-            image = self._set_image_color(array)
-            self.camera_image = _ci.CameraImage(image=image,
-                                                coarsen=self.coarsen)
+            self.camera_image = self.profiler.prepare_for_new_image(raw_image)
             # clear the stream in preparation for the next frame
             current_frame.truncate(0)
             self.update_video()
@@ -265,10 +260,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         If waitKey(0) is passed then it waits indefinitely.
         """
         key = _cv2.waitKey(1) & 0xFF
-
-    def _convert_raw_image_to_numpy_array(self, raw_image):
-        array = np.nan_to_num(raw_image.array)
-        return array
 
     def update_column_and_row_sum_figures(self):
         self.update_column_sum_figures()
