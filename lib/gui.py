@@ -310,7 +310,6 @@ class CameraDisplay(QtGui.QLabel):
         self.update_frame(self.image)
 
     def update_video(self, image):
-        self.update_image(image)
         self.update_frame(self.image)
 
     def update_frame(self, image):
