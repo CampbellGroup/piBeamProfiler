@@ -121,7 +121,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.exposure_bar.setValue(65)
 
     def make_video_window(self):
-        self.video_window = QtGui.QLabel(self)
+        self.video_window = CameraDisplay(
+            monitor_screen_resolution=self.monitor_screen_resolution)
 
     def make_texts(self):
         self.column_sum_waist_label = QtGui.QLabel()
@@ -290,6 +291,45 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def closeEvent(self, x):
         self.profiler.close_camera()
+
+
+class CameraDisplay(QtGui.QLabel):
+    def __init__(self, monitor_screen_resolution=(640, 480)):
+        super(CameraDisplay, self).__init__()
+        self.monitor_screen_resolution = monitor_screen_resolution
+        self.initialize_image()
+
+    def initialize_image(self):
+        self.image = np.zeros((480, 640))
+        self.image_scale_factor = 2.1
+        self.image_h_to_v_conversion_factor = 4./3.
+        self.videoy = int(self.monitor_screen_resolution[0] /
+                          self.image_scale_factor)
+        self.videox = int(self.image_h_to_v_conversion_factor * self.videoy)
+        self.counter = 0
+        self.update_frame(self.image)
+
+    def update_video(self, image):
+        self.update_image(image)
+        self.counter += 1
+        print "Counter = ", self.counter
+        self.update_frame(self.image)
+
+    def update_frame(self, image):
+        qPixmap = self.nparrayToQPixmap(image)
+        self.setPixmap(qPixmap.scaled(self.videox, self.videoy))
+        self.repaint()
+#        self.show()
+
+    def nparrayToQPixmap(self, array):
+        pil_image = toimage(array)
+        qt_image = ImageQt(pil_image)
+        q_image = QtGui.QImage(qt_image)
+        qPixmap = QtGui.QPixmap(q_image)
+        return qPixmap
+
+    def update_image(self, image):
+        self.image = image
 
 
 if __name__ == "__main__":
