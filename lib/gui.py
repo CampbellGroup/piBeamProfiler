@@ -237,7 +237,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
                                  use_video_port=True):
             # cv2 thingy
             self._bypass_cv2_keyboard_event()
-            self.camera_image = self.profiler.prepare_for_new_image(raw_image)
+            self.camera_image = self.profiler.prepare_for_raw_image(raw_image)
             # clear the stream in preparation for the next frame
             current_frame.truncate(0)
             self.update_video()
