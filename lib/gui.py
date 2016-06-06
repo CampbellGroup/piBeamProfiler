@@ -21,7 +21,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def set_parameters(self):
         self.zoom = 0
         self.zoom_gap_factor = .04
-        self.update_image_time = .05
         self.image_scale_factor = 2.1
         self.image_h_to_v_conversion_factor = 4./3.
         self.profiler_running = True
@@ -308,21 +307,16 @@ class CameraDisplay(QtGui.QLabel):
         self.videoy = int(self.monitor_screen_resolution[0] /
                           self.image_scale_factor)
         self.videox = int(self.image_h_to_v_conversion_factor * self.videoy)
-        self.counter = 0
         self.update_frame(self.image)
 
     def update_video(self, image):
-        print image[50][50]
         self.update_image(image)
-        self.counter += 1
-        print "Counter = ", self.counter
-        if self.counter == 10:
-            np.savetxt('image', image, fmt="%1.3f", delimiter=",")
         self.update_frame(self.image)
 
     def update_frame(self, image):
         qPixmap = self.nparrayToQPixmap(image)
-        self.setPixmap(qPixmap.scaled(self.videox, self.videoy))
+#        self.setPixmap(qPixmap.scaled(self.videox, self.videoy))
+        self.setPixmap(qPixmap)
         self.repaint()
 #        self.show()
 
@@ -333,14 +327,11 @@ class CameraDisplay(QtGui.QLabel):
         qPixmap = QtGui.QPixmap(q_image)
         return qPixmap
 
-    def update_image(self, image):
-        self.image = image
-
 
 if __name__ == "__main__":
     a = QtGui.QApplication([])
     profilerwidget = PiBeamProfilerGUI()
-    profilerwidget.show()
     a.processEvents()
+    profilerwidget.show()
     profilerwidget.run_beam_profiler()
     sys.exit(a.exec_())
