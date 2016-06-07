@@ -14,17 +14,8 @@ FigureCanvas = _qt4agg.FigureCanvasQTAgg
 class PiBeamProfilerGUI(QtGui.QWidget):
     def __init__(self):
         super(PiBeamProfilerGUI, self).__init__()
-        self.set_parameters()
         self.initialize_beam_profiler()
         self.initialize_gui()
-
-    def set_parameters(self):
-        self.zoom = 0
-        self.zoom_gap_factor = .04
-        self.image_scale_factor = 2.1
-        self.image_h_to_v_conversion_factor = 4./3.
-        self.profiler_running = True
-        self.breakloop = False
 
     def initialize_beam_profiler(self):
         self.profiler = _pi_beam_profiler.PiBeamProfiler()
@@ -35,20 +26,11 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.row_positions = np.linspace(0, self.row_count-1, self.row_count)
 
     def initialize_gui(self):
-        self.get_image_boundaries()
         self.get_screen_resolution()
         self.setWindowTitle('Beam Profiler')
         self.setGeometry(0, 0, *self.monitor_screen_resolution)
         self.make_widgets()
         self.setup_layout()
-
-    def get_image_boundaries(self):
-        column_gap = self.column_count*(self.zoom * self.zoom_gap_factor)
-        row_gap = self.row_count*(self.zoom * self.zoom_gap_factor)
-        self.min_row_index = row_gap
-        self.max_row_index = self.row_count - row_gap
-        self.min_column_index = column_gap
-        self.max_column_index = self.column_count - column_gap
 
     def get_screen_resolution(self):
         desktop = QtGui.QDesktopWidget()
@@ -134,13 +116,13 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def set_row_sum_plot_lims(self):
         self.row_sum_ax.set_xlim(0, 300)
-        ymin = self.min_row_index
-        ymax = self.max_row_index
+        ymin = 0
+        ymax = self.row_count - 1
         self.row_sum_ax.set_ylim(ymin, ymax)
 
     def set_column_sum_plot_lims(self):
-        xmin = self.min_column_index
-        xmax = self.max_column_index
+        xmin = 0
+        xmax = self.column_count - 1
         self.column_sum_ax.set_xlim(xmin, xmax)
         self.column_sum_ax.set_ylim(0, 300)
 
@@ -178,8 +160,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def update_video(self):
         # convert RGB image np array to qPixmap and update canvas widget
         image = self.camera_image.image
-#        image = image[self.min_row_index: self.max_row_index,
-#                      self.min_column_index: self.max_column_index]
         self.video_window.update_video(image)
 
     def _bypass_cv2_keyboard_event(self):
@@ -235,11 +215,6 @@ class CameraDisplay(QtGui.QLabel):
 
     def initialize_image(self):
         self.image = np.zeros((480, 640))
-        self.image_scale_factor = 2.1
-        self.image_h_to_v_conversion_factor = 4./3.
-        self.videoy = int(self.monitor_screen_resolution[0] /
-                          self.image_scale_factor)
-        self.videox = int(self.image_h_to_v_conversion_factor * self.videoy)
         self.update_frame()
 
     def update_video(self, image):
@@ -248,9 +223,8 @@ class CameraDisplay(QtGui.QLabel):
 
     def update_frame(self):
         qPixmap = self.nparrayToQPixmap(self.image)
-        self.setPixmap(qPixmap.scaled(self.videox, self.videoy))
         self.setPixmap(qPixmap)
-        self.repaint()
+#        self.repaint()
 #        self.show()
 
     def nparrayToQPixmap(self, array):
