@@ -27,6 +27,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.set_camera_shutter_speed(100)  # in us
         self.camera.exposure_mode = 'off'
         self.camera.iso = 300
+        self.color = 'green'
         # grab a reference to the raw camera capture
         rgbarray = _array.PiRGBArray
         self.current_frame = rgbarray(self.camera, size=self.camera_resolution)
