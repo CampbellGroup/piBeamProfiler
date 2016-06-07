@@ -113,25 +113,19 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
 
 class CameraDisplay(QtGui.QLabel):
-    def __init__(self, monitor_screen_resolution=(640, 480)):
+    def __init__(self):
         super(CameraDisplay, self).__init__()
-        self.monitor_screen_resolution = monitor_screen_resolution
         self.initialize_image()
 
     def initialize_image(self):
         self.image = np.zeros((480, 640))
-        self.image_scale_factor = 2.1
-        self.image_h_to_v_conversion_factor = 4./3.
-        self.videoy = int(self.monitor_screen_resolution[0] /
-                          self.image_scale_factor)
-        self.videox = int(self.image_h_to_v_conversion_factor * self.videoy)
-        self.update_frame(self.image)
+        self.update_frame()
 
-    def update_video(self, image):
-        self.update_frame(self.image)
+    def update_video(self):
+        self.update_frame()
 
-    def update_frame(self, image):
-        qPixmap = self.nparrayToQPixmap(image)
+    def update_frame(self):
+        qPixmap = self.nparrayToQPixmap(self.image)
 #        self.setPixmap(qPixmap.scaled(self.videox, self.videoy))
         self.setPixmap(qPixmap)
         self.repaint()
