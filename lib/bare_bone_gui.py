@@ -83,13 +83,13 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.counter = 0
         for raw_image in capture(self.current_frame, format='bgr',
                                  use_video_port=True):
+            # clear the stream in preparation for the next frame
+            self.current_frame.truncate(0)
             # cv2 thingy
             self._bypass_cv2_keyboard_event()
             array = self._convert_raw_image_to_numpy_array(raw_image)
             image = self._set_image_color(array)
             self.camera_image = image
-            # clear the stream in preparation for the next frame
-            self.current_frame.truncate(0)
             self.update_video()
 
     def update_video(self):
