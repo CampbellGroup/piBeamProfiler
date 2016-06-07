@@ -59,7 +59,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def setup_layout(self):
         layout = QtGui.QGridLayout()
-        layout.addWidget(self.video_window, 0, 0, 2, 1)
+        layout.addWidget(self.video_window, 0, 0)
         self.setLayout(layout)
 
     def _convert_raw_image_to_numpy_array(self, raw_image):
