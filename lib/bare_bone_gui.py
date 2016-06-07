@@ -99,7 +99,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         image = self.camera_image
 #        image = image[self.min_row_index: self.max_row_index,
 #                      self.min_column_index: self.max_column_index]
-        self.video_window.update_video()
+        self.video_window.update_video(image)
 
     def _bypass_cv2_keyboard_event(self):
         """
