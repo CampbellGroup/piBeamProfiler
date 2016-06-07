@@ -59,11 +59,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def make_widgets(self):
         self.make_column_and_row_sum_plots()
-        self.make_exposure_slider()
-        self.make_exposure_bar()
         self.make_video_window()
-        self.make_texts()
-        self.make_buttons()
+        self.make_information_panel()
 
     def make_column_and_row_sum_plots(self):
         self.make_column_sum_plot()
@@ -109,51 +106,24 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.row_sum_ax.get_yaxis().set_visible(False)
         self.row_sum_ax.patch.set_visible(False)
 
-    def make_exposure_slider(self):
-        self.exposure_slider = QtGui.QSlider(QtCore.Qt.Vertical)
-        self.exposure_slider.setSingleStep(1)
-        self.exposure_slider.valueChanged[int].connect(
-            self.change_camera_exposure)
-
-    def make_exposure_bar(self):
-        self.exposure_bar = QtGui.QProgressBar()
-        self.exposure_bar.setOrientation(QtCore.Qt.Vertical)
-        self.exposure_bar.setValue(65)
-
     def make_video_window(self):
         self.video_window = CameraDisplay(
             monitor_screen_resolution=self.monitor_screen_resolution)
 
-    def make_texts(self):
+    def make_information_panel(self):
+        self.information_panel = QtGui.QFrame()
         self.column_sum_waist_label = QtGui.QLabel()
         self.row_sum_waist_label = QtGui.QLabel()
+        self.exposure_label = QtGui.QLabel()
         font = 'color: #FF6600; font-weight: bold; font-family: Copperplate'
         font += ' / Copperplate Gothic Light, sans-serif'
         self.column_sum_waist_label.setStyleSheet(font)
         self.row_sum_waist_label.setStyleSheet(font)
-
-    def make_buttons(self):
-        self.zoomin_button = QtGui.QPushButton('Zoom In')
-        self.zoomout_button = QtGui.QPushButton('Zoom Out')
-        self.high_resolution_button = QtGui.QPushButton('1296x972')
-        self.low_resolution_button = QtGui.QPushButton('640x480')
-
-        button_width = self.monitor_screen_resolution[0]/12
-        button_height = self.monitor_screen_resolution[1]/4
-        button_size = (button_width, button_height)
-        self.high_resolution_button.setFixedSize(*button_size)
-        self.low_resolution_button.setFixedSize(*button_size)
-        self.zoomin_button.setFixedSize(*button_size)
-        self.zoomout_button.setFixedSize(*button_size)
-
-        self.high_resolution_button.setCheckable(True)
-        self.low_resolution_button.setCheckable(True)
-        self.low_resolution_button.setChecked(True)
-
-        self.zoomin_button.toggled.connect(self.zoom_in)
-        self.zoomout_button.toggled.connect(self.zoom_out)
-        self.low_resolution_button.clicked.connect(self.set_low_resolution)
-        self.high_resolution_button.clicked.connect(self.set_high_resolution)
+        self.exposure_label.setStyleSheet(font)
+        panel_layout = QtGui.QGridLayout()
+        panel_layout.addWidget(self.column_sum_waist_label)
+        panel_layout.addWidget(self.row_sum_waist_label)
+        panel_layout.addWidget(self.exposure_label)
 
     def change_camera_exposure(self, value):
         # set shutter speed (exposure time) according to a scaling law that
@@ -202,7 +172,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def update_GUI(self):
         self.update_video()
         self.update_column_and_row_sum_figures()
-        self.update_beam_diameter_information()
+        self.update_image_information()
 
     def update_video(self):
         # convert RGB image np array to qPixmap and update canvas widget
@@ -239,7 +209,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.row_sum_figure.canvas.draw()
         self.row_sum_figure.canvas.flush_events()
 
-    def update_beam_diameter_information(self):
+    def update_image_information(self):
         # update column and row beam diameter information
         text_ending = 'um, 1/e**2 Int. diam.'
         column_diameter = self.camera_image.column_width * 2.
@@ -248,6 +218,9 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         row_diameter = self.camera_image.row_width * 2.
         row_text = 'Y = ' + str(row_diameter)[0:5] + text_ending
         self.row_sum_waist_label.setText(row_text)
+        exposure_text = 'Exposure: %s' % round(self.camera_image.saturation, 0)
+        exposure_text += "%"
+        self.exposure_label.setText(exposure_text)
 
     def closeEvent(self, x):
         self.profiler.close_camera()
