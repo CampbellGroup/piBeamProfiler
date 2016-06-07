@@ -175,55 +175,13 @@ class PiBeamProfilerGUI(QtGui.QWidget):
             self.zoom -= 1
             self.resize_plots()
 
-    def resize_plots(self):
-        self.get_zoom_gaps()
-        self.set_row_sum_plot_lims()
-        self.set_column_sum_plot_lims()
-
-    def set_row_sum_plot_lims(self):
-        self.row_sum_ax.set_xlim(0, 300)
-        ymin = self.min_row_index
-        ymax = self.max_row_index
-        self.row_sum_ax.set_ylim(ymin, ymax)
-
-    def set_column_sum_plot_lims(self):
-        xmin = self.min_column_index
-        xmax = self.max_column_index
-        self.column_sum_ax.set_xlim(xmin, xmax)
-        self.column_sum_ax.set_ylim(0, 300)
-
-    def set_low_resolution(self):
-        self.high_resolution_button.setChecked(False)
-        self.breakloop = True
-        self.profiler.set_camera_resolution_mode('low')
-        time.sleep(1)
-        self.make_column_and_row_sum_plots()
-        self.profiler.restart_camera()
-
-    def set_high_resolution(self):
-        self.low_resolution_button.setChecked(False)
-        self.breakloop = True
-        self.profiler.set_camera_resolution_mode('high')
-        time.sleep(1)
-        self.make_column_and_row_sum_plots()
-        self.profiler.restart_camera()
-
     def setup_layout(self):
         layout = QtGui.QGridLayout()
         layout.addWidget(self.video_window, 0, 0, 2, 1)
         layout.addWidget(self.column_sum_canvas, 2, 0, 2, 1)
         layout.addWidget(self.row_sum_canvas, 0, 1, 2, 1)
-        layout.addWidget(self.exposure_bar, 0, 4, 2, 1)
-        layout.addWidget(self.column_sum_waist_label, 2, 1, 1, 3)
-        layout.addWidget(self.row_sum_waist_label, 3, 1, 1, 3)
-
-        # withholds these widgets for tiny screens
-        if not any(side <= 400 for side in self.monitor_screen_resolution):
-            layout.addWidget(self.low_resolution_button, 1, 2)
-            layout.addWidget(self.high_resolution_button, 1, 3)
-            layout.addWidget(self.zoomin_button, 0, 3)
-            layout.addWidget(self.zoomout_button, 0, 2)
-            layout.addWidget(self.exposure_slider, 0, 5, 2, 1)
+        layout.addWidget(self.column_sum_waist_label, 2, 1, 1, 2)
+        layout.addWidget(self.row_sum_waist_label, 2, 2, 1, 2)
 
         self.setLayout(layout)
 
