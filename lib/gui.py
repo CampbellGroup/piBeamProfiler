@@ -239,10 +239,9 @@ class PiBeamProfilerGUI(QtGui.QWidget):
             self.camera_image = self.profiler.prepare_for_raw_image(raw_image)
             # clear the stream in preparation for the next frame
             current_frame.truncate(0)
-            self.update_video()
+            self.update_GUI()
 
     def update_GUI(self):
-        self.fetch_data()
         self.update_video()
         self.update_column_and_row_sum_figures()
         self.update_beam_diameter_information()
