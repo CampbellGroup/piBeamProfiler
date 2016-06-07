@@ -13,6 +13,7 @@ class CameraImage(object):
         self.coarsen = coarsen
 
         self._global_max = _n.max(self.image)
+        self.saturation = self._global_max / 255. * 100.
         self._scale_factor = 40.
         self._beam_diameter_guess = 200.
 
