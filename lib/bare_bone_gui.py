@@ -53,6 +53,10 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.video_window = CameraDisplay(
             monitor_screen_resolution=self.monitor_screen_resolution)
 
+    def set_camera_shutter_speed(self, shutter_speed):
+        """ Set shutter speed in us. """
+        self.camera.shutter_speed = shutter_speed
+
     def setup_layout(self):
         layout = QtGui.QGridLayout()
         layout.addWidget(self.video_window, 0, 0, 2, 1)
