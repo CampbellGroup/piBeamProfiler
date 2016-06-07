@@ -26,10 +26,10 @@ class CameraImage(object):
         self._gaussian_fit_column_and_row_sums()
 
     def _calculate_column_and_row_sums(self):
-        column_sum = self.image.sum(axis=1)/self._scale_factor
-        column_sum = column_sum[::-1]
+        row_sum = self.image.sum(axis=1)/self._scale_factor
+        row_sum = row_sum[::-1]
 
-        row_sum = self.image.sum(axis=0)/self._scale_factor
+        column_sum = self.image.sum(axis=0)/self._scale_factor
 
         # background substraction
         self.column_sum = column_sum - _n.min(column_sum)
