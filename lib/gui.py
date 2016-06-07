@@ -150,8 +150,10 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         layout.addWidget(self.column_sum_canvas, 1, 0)
         layout.addWidget(self.row_sum_canvas, 0, 1)
         layout.addWidget(self.information_panel, 1, 1)
-        layout.setColumnStretch(4, 1)
-        layout.setRowStretch(4, 1)
+        layout.setColumnStretch(0, 4)
+        layout.setColumnStretch(1, 1)
+        layout.setRowStretch(0, 4)
+        layout.setRowStretch(1, 1)
         self.setLayout(layout)
 
     def run_beam_profiler(self):
