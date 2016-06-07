@@ -27,13 +27,14 @@ class CameraImage(object):
         self._gaussian_fit_column_and_row_sums()
 
     def _calculate_column_and_row_sums(self):
-        row_sum = self.image.sum(axis=1)/self._scale_factor
+        inverted_row_sum = self.image.sum(axis=1)/self._scale_factor
 
         column_sum = self.image.sum(axis=0)/self._scale_factor
 
         # background substraction
         self.column_sum = column_sum - _n.min(column_sum)
-        self.row_sum = row_sum - _n.min(row_sum)
+        inverted_row_sum = inverted_row_sum - _n.min(inverted_row_sum)
+        self.row_sum = inverted_row_sum[::-1]
 
         self.column_positions = range(len(self.column_sum))
         self.row_positions = range(len(self.row_sum))
