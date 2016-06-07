@@ -309,7 +309,7 @@ class CameraDisplay(QtGui.QLabel):
         self.videoy = int(self.monitor_screen_resolution[0] /
                           self.image_scale_factor)
         self.videox = int(self.image_h_to_v_conversion_factor * self.videoy)
-        self.update_frame(self.image)
+        self.update_frame()
 
     def update_video(self, image):
         self.image = image
