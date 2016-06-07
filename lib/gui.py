@@ -131,19 +131,17 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         shutter_speed = int(.5 * value**2. + 1)
         self.profiler.set_camera_shutter_speed(shutter_speed)
 
-    def zoom_in(self):
-        if self.zoom >= 10:
-            self.zoom = 10
-        else:
-            self.zoom += 1
-            self.resize_plots()
+    def set_row_sum_plot_lims(self):
+        self.row_sum_ax.set_xlim(0, 300)
+        ymin = self.min_row_index
+        ymax = self.max_row_index
+        self.row_sum_ax.set_ylim(ymin, ymax)
 
-    def zoom_out(self):
-        if self.zoom <= 0:
-            self.zoom = 0
-        else:
-            self.zoom -= 1
-            self.resize_plots()
+    def set_column_sum_plot_lims(self):
+        xmin = self.min_column_index
+        xmax = self.max_column_index
+        self.column_sum_ax.set_xlim(xmin, xmax)
+        self.column_sum_ax.set_ylim(0, 300)
 
     def setup_layout(self):
         layout = QtGui.QGridLayout()
