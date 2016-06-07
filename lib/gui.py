@@ -317,15 +317,17 @@ class CameraDisplay(QtGui.QLabel):
 
     def update_frame(self):
         qPixmap = self.nparrayToQPixmap(self.image)
-#        self.setPixmap(qPixmap.scaled(self.videox, self.videoy))
+        self.setPixmap(qPixmap.scaled(self.videox, self.videoy))
         self.setPixmap(qPixmap)
         self.repaint()
 #        self.show()
 
     def nparrayToQPixmap(self, array):
-        pil_image = toimage(array)
-        qt_image = ImageQt(pil_image)
-        q_image = QtGui.QImage(qt_image)
+        h, w = array.shape
+        gray_image = np.require(array, np.uint8, 'C')
+        q_image = QtGui.QImage(gray_image.data, w, h,
+                               QtGui.QImage.Format_Indexed8)
+
         qPixmap = QtGui.QPixmap(q_image)
         return qPixmap
 
