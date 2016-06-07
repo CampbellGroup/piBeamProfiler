@@ -22,6 +22,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.camera = _picamera.PiCamera()
         # set camera resolution, gain , sutter speed and framerate
         self.camera_resolution = (640, 480)
+        self.camera.resolution = self.camera_resolution
         self.camera.framerate = 33  # in Hz
         self.set_camera_shutter_speed(100)  # in us
         self.camera.exposure_mode = 'off'
