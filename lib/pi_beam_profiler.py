@@ -55,7 +55,10 @@ class PiBeamProfiler(object):
             self.resolution_mode = 'low'
 
     def prepare_for_raw_image(self, raw_image):
-        array = self._convert_raw_image_to_numpy_array(raw_image)
+        # raw image taken from camera is upside down
+        inverted_array = self._convert_raw_image_to_numpy_array(raw_image)
+        # flip the inverted array
+        array = inverted_array[::-1]
         image = self._set_image_color(array)
         camera_image = _ci.CameraImage(image=image, coarsen=self.coarsen)
         return camera_image

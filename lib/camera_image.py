@@ -27,7 +27,6 @@ class CameraImage(object):
 
     def _calculate_column_and_row_sums(self):
         row_sum = self.image.sum(axis=1)/self._scale_factor
-        row_sum = row_sum[::-1]
 
         column_sum = self.image.sum(axis=0)/self._scale_factor
 
