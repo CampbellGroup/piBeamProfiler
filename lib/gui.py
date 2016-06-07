@@ -124,6 +124,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         panel_layout.addWidget(self.column_sum_waist_label)
         panel_layout.addWidget(self.row_sum_waist_label)
         panel_layout.addWidget(self.exposure_label)
+        self.information_panel.setLayout(panel_layout)
 
     def change_camera_exposure(self, value):
         # set shutter speed (exposure time) according to a scaling law that
@@ -148,9 +149,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         layout.addWidget(self.video_window, 0, 0, 2, 1)
         layout.addWidget(self.column_sum_canvas, 2, 0, 2, 1)
         layout.addWidget(self.row_sum_canvas, 0, 1, 2, 1)
-        layout.addWidget(self.column_sum_waist_label, 2, 1, 1, 2)
-        layout.addWidget(self.row_sum_waist_label, 2, 2, 1, 2)
-
+        layout.addWidget(self.information_panel, 2, 1, 1, 2)
         self.setLayout(layout)
 
     def run_beam_profiler(self):
