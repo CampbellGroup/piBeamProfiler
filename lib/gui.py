@@ -94,9 +94,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.column_sum_waist_label = QtGui.QLabel()
         self.row_sum_waist_label = QtGui.QLabel()
         self.exposure_label = QtGui.QLabel()
-        self.red_button = QtGui.QPushButton('red')
-        self.green_button = QtGui.QPushButton('green')
-        self.blue_button = QtGui.QPushButton('blue')
+        self.make_buttons()
         font = 'color: #FF6600; font-weight: bold; font-family: Copperplate'
         font += ' / Copperplate Gothic Light, sans-serif'
         self.column_sum_waist_label.setStyleSheet(font)
@@ -110,6 +108,44 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         panel_layout.addWidget(self.green_button, 1, 2, 1, 1)
         panel_layout.addWidget(self.blue_button, 2, 2, 1, 1)
         self.information_panel.setLayout(panel_layout)
+
+    def make_buttons(self):
+        self.red_button = QtGui.QPushButton('red')
+        self.green_button = QtGui.QPushButton('green')
+        self.blue_button = QtGui.QPushButton('blue')
+
+        self.red_button.setCheckable(True)
+        self.green_button.setCheckable(True)
+        self.blue_button.setCheckable(True)
+
+        self.red_button.clicked.connect(self.set_image_color_red)
+        self.green_button.clicked.connect(self.set_image_color_green)
+        self.blue_button.clicked.connect(self.set_image_color_blue)
+
+        self.red_button.setChecked(True)
+
+    def make_a_color_button(self, color):
+        # make a QPushButton with color as the text of the button
+        button_name = color + "_button"
+        setattr(self, button_name, QtGui.QPushButton(color))
+
+    def set_image_color(self, color):
+        self.profiler.set_image_color(self, color)
+
+    def set_image_color_red(self):
+        self.set_image_color('red')
+        self.green_button.setChecked(False)
+        self.blue_button.setChecked(False)
+
+    def set_image_color_blue(self):
+        self.set_image_color('blue')
+        self.red_button.setChecked(False)
+        self.green_button.setChecked(False)
+
+    def set_image_color_green(self):
+        self.set_image_color('green')
+        self.red_button.setChecked(False)
+        self.blue_button.setChecked(False)
 
     def change_camera_exposure(self, value):
         # set shutter speed (exposure time) according to a scaling law that
