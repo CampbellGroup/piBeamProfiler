@@ -23,9 +23,9 @@ class TestMath(ut.TestCase):
         row_amp = self.camera_image.row_amp
         row_center = self.camera_image.row_center
         row_width = self.camera_image.row_width
-        exp_row_amp = 6.64670194
+        exp_row_amp = 3.988021164
         exp_row_center = 300.
-        exp_row_width = 30.
+        exp_row_width = 50.
         self.assertAlmostEquals(row_center, exp_row_center)
         self.assertAlmostEquals(row_width, exp_row_width)
         self.assertAlmostEquals(row_amp, exp_row_amp)
@@ -34,9 +34,9 @@ class TestMath(ut.TestCase):
         column_amp = self.camera_image.column_amp
         column_center = self.camera_image.column_center
         column_width = self.camera_image.column_width
-        exp_column_amp = 3.988021164
+        exp_column_amp = 6.64670194
         exp_column_center = 300.
-        exp_column_width = 50.
+        exp_column_width = 30.
         self.assertAlmostEquals(column_center, exp_column_center)
         self.assertAlmostEquals(column_width, exp_column_width)
         self.assertAlmostEquals(column_amp, exp_column_amp)
