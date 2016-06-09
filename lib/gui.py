@@ -237,7 +237,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def update_image_information(self):
         # update column and row beam diameter information
-        text_ending = 'um, 1/e*2 Int. diam.'
+        text_ending = 'um, 1/e Int. diam.'
         column_diameter_in_pix = self.camera_image.column_width * 2.
         column_diameter = self.convert_pixel_to_um(column_diameter_in_pix)
         column_text = 'X = ' + str(column_diameter)[0:5] + text_ending
