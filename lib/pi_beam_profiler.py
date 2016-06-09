@@ -91,5 +91,9 @@ class PiBeamProfiler(object):
             image = red_image
         return image
 
+    def set_image_color(self, color):
+        if color in ['red', 'green', 'blue']:
+            self.color = color
+
     def close_camera(self):
         self.camera.close()

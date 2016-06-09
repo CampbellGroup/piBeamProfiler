@@ -1,9 +1,6 @@
-import time
 from PyQt4 import QtGui, QtCore
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL.ImageQt import ImageQt
-from scipy.misc.pilutil import toimage
 import sys
 import pi_beam_profiler as _pi_beam_profiler
 import cv2 as _cv2
@@ -97,15 +94,21 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.column_sum_waist_label = QtGui.QLabel()
         self.row_sum_waist_label = QtGui.QLabel()
         self.exposure_label = QtGui.QLabel()
+        self.red_button = QtGui.QPushButton('red')
+        self.green_button = QtGui.QPushButton('green')
+        self.blue_button = QtGui.QPushButton('blue')
         font = 'color: #FF6600; font-weight: bold; font-family: Copperplate'
         font += ' / Copperplate Gothic Light, sans-serif'
         self.column_sum_waist_label.setStyleSheet(font)
         self.row_sum_waist_label.setStyleSheet(font)
         self.exposure_label.setStyleSheet(font)
         panel_layout = QtGui.QGridLayout()
-        panel_layout.addWidget(self.column_sum_waist_label)
-        panel_layout.addWidget(self.row_sum_waist_label)
-        panel_layout.addWidget(self.exposure_label)
+        panel_layout.addWidget(self.column_sum_waist_label, 0, 0, 1, 2)
+        panel_layout.addWidget(self.row_sum_waist_label, 1, 0, 1, 2)
+        panel_layout.addWidget(self.exposure_label, 2, 0, 1, 2)
+        panel_layout.addWidget(self.red_button, 0, 2, 1, 1)
+        panel_layout.addWidget(self.green_button, 1, 2, 1, 1)
+        panel_layout.addWidget(self.blue_button, 2, 2, 1, 1)
         self.information_panel.setLayout(panel_layout)
 
     def change_camera_exposure(self, value):
