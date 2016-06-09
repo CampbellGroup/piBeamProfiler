@@ -224,6 +224,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.column_sum_lines.set_ydata(self.camera_image.column_sum)
         self.column_sum_fit_lines.set_xdata(self.camera_image.column_positions)
         self.column_sum_fit_lines.set_ydata(self.camera_image.column_sum_fit)
+        ymax = max(max(self.camera_image.column_sum), 300)
+        self.column_sum_ax.set_ylim(0, ymax)
         self.column_sum_figure.canvas.draw()
         self.column_sum_figure.canvas.flush_events()
 
@@ -232,6 +234,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.row_sum_lines.set_ydata(self.camera_image.row_positions)
         self.row_sum_fit_lines.set_xdata(self.camera_image.row_sum_fit)
         self.row_sum_fit_lines.set_ydata(self.camera_image.row_positions)
+        xmax = max(max(self.camera_image.row_sum), 300)
+        self.row_sum_ax.set_xlim(0, xmax)
         self.row_sum_figure.canvas.draw()
         self.row_sum_figure.canvas.flush_events()
 
