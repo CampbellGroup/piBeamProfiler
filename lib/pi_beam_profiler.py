@@ -25,7 +25,7 @@ class PiBeamProfiler(object):
         """
         self.resolution_mode = 'low'
         self.camera_format = 'bgr'
-        self.color = 'green'
+        self.color = 'red'
         self.coarsen = False
 
     def restart_camera(self):
@@ -79,16 +79,16 @@ class PiBeamProfiler(object):
         return array
 
     def _set_image_color(self, array):
-        """ Pick color pixel to use for image. Default(green). """
+        """ Pick color pixel to use for image. Default(red). """
         red_image = array[:, :, 0]
         green_image = array[:, :, 1]
         blue_image = array[:, :, 2]
-        if self.color == 'red':
-            image = red_image
+        if self.color == 'green':
+            image = green_image
         elif self.color == 'blue':
             image = blue_image
         else:
-            image = green_image
+            image = red_image
         return image
 
     def close_camera(self):
