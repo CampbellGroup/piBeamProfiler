@@ -303,7 +303,7 @@ class CameraDisplay(QtGui.QLabel):
         q_image = QtGui.QImage(gray_image.data, w, h,
                                QtGui.QImage.Format_Indexed8)
 
-        qPixmap = QtGui.QPixmap(q_image.scaled(width, height))
+        qPixmap = QtGui.QPixmap(q_image.scaled(self.width, self.height))
         return qPixmap
 
 
