@@ -1,4 +1,4 @@
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -294,8 +294,6 @@ class CameraDisplay(QtGui.QLabel):
     def update_frame(self):
         qPixmap = self.nparrayToQPixmap(self.image)
         self.setPixmap(qPixmap)
-#        self.repaint()
-#        self.show()
 
     def nparrayToQPixmap(self, array):
         h, w = array.shape
