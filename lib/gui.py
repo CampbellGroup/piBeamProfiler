@@ -270,10 +270,18 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
 
 class CameraDisplay(QtGui.QLabel):
-    def __init__(self, monitor_screen_resolution=(640, 480)):
+    def __init__(self, monitor_screen_resolution=(640, 480), image_scale=1.3):
         super(CameraDisplay, self).__init__()
         self.monitor_screen_resolution = monitor_screen_resolution
+        self.image_scale = image_scale
+        self.set_image_resolution_from_scale()
         self.initialize_image()
+
+    def set_image_resolution_from_scale(self):
+        width = self.monitor_screen_resolution[0]/self.image_scale
+        height = width * 3./4.  # adopt a 4:3 ratio for width and height
+        self.width = int(width)
+        self.height = int(height)
 
     def initialize_image(self):
         self.image = np.zeros((480, 640))
@@ -295,7 +303,7 @@ class CameraDisplay(QtGui.QLabel):
         q_image = QtGui.QImage(gray_image.data, w, h,
                                QtGui.QImage.Format_Indexed8)
 
-        qPixmap = QtGui.QPixmap(q_image)
+        qPixmap = QtGui.QPixmap(q_image.scaled(width, height))
         return qPixmap
 
 
