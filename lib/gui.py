@@ -125,25 +125,22 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.red_button.setChecked(True)
 
     def set_image_color(self, color):
-        self.profiler.set_image_color(self, color)
+        self.profiler.set_image_color(color)
 
     def set_image_color_red(self):
         self.set_image_color('red')
         self.green_button.setChecked(False)
         self.blue_button.setChecked(False)
-        print "red"
 
     def set_image_color_blue(self):
         self.set_image_color('blue')
         self.red_button.setChecked(False)
         self.green_button.setChecked(False)
-        print "blue"
 
     def set_image_color_green(self):
         self.set_image_color('green')
         self.red_button.setChecked(False)
         self.blue_button.setChecked(False)
-        print "green"
 
     def change_camera_exposure(self, value):
         # set shutter speed (exposure time) according to a scaling law that
