@@ -9,8 +9,19 @@ FigureCanvas = _qt4agg.FigureCanvasQTAgg
 
 
 class PiBeamProfilerGUI(QtGui.QWidget):
+    """
+    NOTE: The beam size obtained from this GUI is scaled by a factor given as
+    below. This seems to be necessary because there is some unresolvable
+    discrepancy between Gaussian fit from the image, and knife edge
+    measurements. In order to use this GUI properly, some initial calibration
+    might be necessary.
+
+    calibrated scaling factor (change the value in self.__init__):
+    self.scale = .776
+    """
     def __init__(self):
         super(PiBeamProfilerGUI, self).__init__()
+        self.scale = .776
         self.initialize_beam_profiler()
         self.initialize_gui()
 
@@ -227,15 +238,28 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def update_image_information(self):
         # update column and row beam diameter information
         text_ending = 'um, 1/e*2 Int. diam.'
-        column_diameter = self.camera_image.column_width * 2.
+        column_diameter_in_pix = self.camera_image.column_width * 2.
+        column_diameter = self.convert_pixel_to_um(column_diameter_in_pix)
         column_text = 'X = ' + str(column_diameter)[0:5] + text_ending
         self.column_sum_waist_label.setText(column_text)
-        row_diameter = self.camera_image.row_width * 2.
+        row_diameter_in_pix = self.camera_image.row_width * 2.
+        row_diameter = self.convert_pixel_to_um(row_diameter_in_pix)
         row_text = 'Y = ' + str(row_diameter)[0:5] + text_ending
         self.row_sum_waist_label.setText(row_text)
         exposure_text = 'Exposure: %s' % round(self.camera_image.saturation, 0)
         exposure_text += "%"
         self.exposure_label.setText(exposure_text)
+
+    def convert_pixel_to_um(self, value):
+        # pixel size on the camera sensor as given by specs
+        camera_sensor_pixel_per_um = 1.4
+        # resolution of 640 * 480 is scaled down from 2592 * 1944, which are
+        # both 4:3 ratio. Need to have a conversion factor for this.
+        resolution_factor = 2592./640.
+        # actual conversion
+        result = value * camera_sensor_pixel_per_um * resolution_factor
+        scaled_result = result * self.scale
+        return scaled_result
 
     def closeEvent(self, x):
         self.profiler.close_camera()
