@@ -289,7 +289,6 @@ class CameraDisplay(QtGui.QLabel):
 
     def update_video(self, image):
         self.image = image
-        print image.shape
         self.update_frame()
 
     def update_frame(self):
@@ -301,7 +300,7 @@ class CameraDisplay(QtGui.QLabel):
         gray_image = np.require(array, np.uint8, 'C')
         q_image = QtGui.QImage(gray_image.data, w, h,
                                QtGui.QImage.Format_Indexed8)
-
+        print (h, w)
         qPixmap = QtGui.QPixmap(q_image.scaled(self.width, self.height))
         return qPixmap
 
