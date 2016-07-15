@@ -295,6 +295,7 @@ class CameraDisplay(QtGui.QLabel):
     def update_frame(self):
         qPixmap = self.nparrayToQPixmap(self.image)
         self.setPixmap(qPixmap)
+        self.show()
 
     def nparrayToQPixmap(self, array):
         h, w = array.shape
