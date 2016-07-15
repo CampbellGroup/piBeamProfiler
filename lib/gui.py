@@ -136,7 +136,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.red_button.setChecked(True)
 
     def set_image_color(self, color):
-        self.profiler.set_image_color(color)
+        self.profiler._set_image_color(color)
 
     def set_image_color_red(self):
         self.set_image_color('red')
