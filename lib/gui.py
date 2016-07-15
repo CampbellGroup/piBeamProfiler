@@ -285,8 +285,6 @@ class CameraDisplay(QtGui.QLabel):
 
     def initialize_image(self):
         self.image = np.zeros((480, 640))
-        for kk, row in enumerate(self.image):
-            self.image[kk] = [kk for element in row]
         self.update_frame()
 
     def update_video(self, image):
