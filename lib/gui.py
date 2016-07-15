@@ -289,8 +289,9 @@ class CameraDisplay(QtGui.QLabel):
         self.update_frame()
 
     def update_video(self, image):
-        self.image = image
-        self.update_frame()
+        pass
+#        self.image = image
+#        self.update_frame()
 
     def update_frame(self):
         qPixmap = self.nparrayToQPixmap(self.image)
