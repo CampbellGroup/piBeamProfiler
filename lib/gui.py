@@ -97,7 +97,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.row_sum_ax.patch.set_visible(False)
 
     def make_video_window(self):
-        self.video_window = CameraDisplay()
+        self.video_window = CameraDisplay(
+            monitor_screen_resolution=self.monitor_screen_resolution)
 
     def make_information_panel(self):
         self.information_panel = QtGui.QFrame()
