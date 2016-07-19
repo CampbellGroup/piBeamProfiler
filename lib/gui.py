@@ -143,7 +143,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
             [], [], linestyle='--', linewidth=2, color='yellow')
 
         # set row sum plot details
-        self.set_row_sum_plot_lims()
         self.row_sum_ax.xaxis.set_ticks_position('none')
         self.row_sum_ax.yaxis.set_ticks_position('none')
         self.row_sum_ax.get_xaxis().set_visible(False)
