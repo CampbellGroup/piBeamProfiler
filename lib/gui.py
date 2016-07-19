@@ -24,6 +24,10 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.scale = .776
         self.zoom = 0.
         self.zoom_max = 4.
+        self.left_column = None
+        self.right_column = None
+        self.top_row = None
+        self.bottom_row = None
         self.initialize_beam_profiler()
         self.initialize_gui()
 
@@ -34,7 +38,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.column_positions = np.linspace(
             0, self.column_count-1, self.column_count)
         self.row_positions = np.linspace(0, self.row_count-1, self.row_count)
-        self.get_rows_and_columns_from_zoom()
 
     def initialize_gui(self):
         self.get_screen_resolution()
@@ -75,6 +78,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         return scaled_result
 
     def crop_image(self, image):
+        self.get_rows_and_columns_from_zoom()
         cropped_image = image[self.top_row:self.bottom_row,
                               self.left_column:self.right_column]
         return cropped_image
@@ -264,6 +268,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def update_video(self):
         # convert RGB image np array to qPixmap and update canvas widget
         image = self.camera_image.image
+        if self.left_column is None:
+            self.get_rows_and_columns_from_zoom(image)
         image = self.crop_image(image)
         self.video_window.update_video(image)
 
