@@ -80,9 +80,9 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         scaled_result = result * self.scale
         return scaled_result
 
-    def crop_image(self, image):
-        cropped_image = image[self.top_row:self.bottom_row,
-                              self.left_column:self.right_column]
+    def crop_image(self):
+        cropped_image = self.image[self.top_row:self.bottom_row,
+                                   self.left_column:self.right_column]
         return cropped_image
 
     def get_screen_resolution(self):
@@ -92,8 +92,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         height = screensize.height()
         self.monitor_screen_resolution = (width, height)
 
-    def get_rows_and_columns_from_zoom(self, image):
-        w, h = image.shape
+    def get_rows_and_columns_from_zoom(self):
+        w, h = self.image.shape
         cropped_col_count_per_zoom_unit = int(w/4./self.zoom_max)
         cropped_row_count_per_zoom_unit = int(h/4./self.zoom_max)
         self.left_column = self.zoom * cropped_col_count_per_zoom_unit
@@ -269,11 +269,11 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def update_video(self):
         # convert RGB image np array to qPixmap and update canvas widget
-        image = self.camera_image.image
+        self.image = self.camera_image.image
         if self.left_column is None:
-            self.get_rows_and_columns_from_zoom(image)
-        image = self.crop_image(image)
-        self.video_window.update_video(image)
+            self.get_rows_and_columns_from_zoom()
+        cropped_image = self.crop_image()
+        self.video_window.update_video(cropped_image)
 
     def _bypass_cv2_keyboard_event(self):
         """
