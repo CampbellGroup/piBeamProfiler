@@ -168,15 +168,18 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.column_sum_waist_label = QtGui.QLabel()
         self.row_sum_waist_label = QtGui.QLabel()
         self.exposure_label = QtGui.QLabel()
+        self.zoom_label = QtGui.QLabel()
         font = 'color: #FF6600; font-weight: bold; font-family: Copperplate'
         font += ' / Copperplate Gothic Light, sans-serif'
         self.column_sum_waist_label.setStyleSheet(font)
         self.row_sum_waist_label.setStyleSheet(font)
         self.exposure_label.setStyleSheet(font)
+        self.zoom_label.setStyleSheet(font)
         panel_layout = QtGui.QVBoxLayout()
         panel_layout.addWidget(self.column_sum_waist_label)
         panel_layout.addWidget(self.row_sum_waist_label)
         panel_layout.addWidget(self.exposure_label)
+        panel_layout.addWidget(self.zoom_label)
         self.information_panel.setLayout(panel_layout)
 
     def make_buttons(self):
@@ -337,15 +340,23 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         exposure_text += "%"
         self.exposure_label.setText(exposure_text)
 
+    def update_zoom_label(self):
+        zoom_text = "Zoom: " % self.zoom
+        self.zoom_label.setText(zoom_text)
+
     def zoom_in(self):
         if self.zoom < 4.:
             self.zoom += 1.
         self.get_rows_and_columns_from_zoom()
+        self.update_zoom_label()
+        self.check_zoom_status()
 
     def zoom_out(self):
         if self.zoom > 0.:
             self.zoom -= 1.
         self.get_rows_and_columns_from_zoom()
+        self.update_zoom_label()
+        self.check_zoom_status()
 
 
 class CameraDisplay(QtGui.QLabel):
