@@ -286,13 +286,13 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def update_column_sum_figures(self):
         cropped_column_sum = self.camera_image.column_sum[
-            self.left_column, self.right_column]
+            self.left_column:self.right_column]
 
         cropped_column_positions = self.camera_image.column_positions[
-            self.left_column, self.right_column]
+            self.left_column:self.right_column]
 
         cropped_column_sum_fit = self.camera_image.column_sum_fit[
-            self.left_column, self.right_column]
+            self.left_column:self.right_column]
 
         self.column_sum_lines.set_xdata(cropped_column_positions)
         self.column_sum_lines.set_ydata(cropped_column_sum)
@@ -305,13 +305,13 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def update_row_sum_figures(self):
         cropped_row_sum = self.camera_image.row_sum[
-            self.top_row, self.bottom_row]
+            self.top_row:self.bottom_row]
 
         cropped_row_positions = self.camera_image.row_positions[
-            self.top_row, self.bottom_row]
+            self.top_row:self.bottom_row]
 
         cropped_row_sum_fit = self.camera_image.row_sum_fit[
-            self.top_row, self.bottom_row]
+            self.top_row:self.bottom_row]
 
         self.row_sum_lines.set_xdata(cropped_row_sum)
         self.row_sum_lines.set_ydata(cropped_row_positions)
