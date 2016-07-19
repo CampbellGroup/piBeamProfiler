@@ -31,10 +31,10 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def initialize_beam_profiler(self):
         self.profiler = _pi_beam_profiler.PiBeamProfiler()
         self.profiler.initialize_camera()
-        self.column_count, self.row_count = self.profiler.camera_resolution
+        column_count, row_count = self.profiler.camera_resolution
         self.column_positions = np.linspace(
-            0, self.column_count-1, self.column_count)
-        self.row_positions = np.linspace(0, self.row_count-1, self.row_count)
+            0, column_count-1, column_count)
+        self.row_positions = np.linspace(0, row_count-1, row_count)
 
     def initialize_gui(self):
         self.get_screen_resolution()
@@ -243,12 +243,12 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def set_row_sum_plot_lims(self):
         self.row_sum_ax.set_xlim(0, 300)
         ymin = 0
-        ymax = self.row_count - 1
+        ymax = self.bottom_row - self.top_row - 1
         self.row_sum_ax.set_ylim(ymin, ymax)
 
     def set_column_sum_plot_lims(self):
         xmin = 0
-        xmax = self.column_count - 1
+        xmax = self.right_column - self.left_column - 1
         self.column_sum_ax.set_xlim(xmin, xmax)
         self.column_sum_ax.set_ylim(0, 300)
 
