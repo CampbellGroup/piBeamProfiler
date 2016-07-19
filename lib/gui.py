@@ -24,6 +24,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.scale = .776
         self.zoom = 0.
         self.zoom_max = 4.
+        self.image_resolution = (640, 480)
         self.initialize_columns_and_rows()
         self.initialize_beam_profiler()
         self.initialize_gui()
@@ -57,6 +58,12 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         # Tony likes
         shutter_speed = int(.5 * value**2. + 1)
         self.profiler.set_camera_shutter_speed(shutter_speed)
+
+    def change_video_window_display_resolution(self):
+        w = self.right_column - self.left_column + 1
+        h = self.bottom_row - self.top_row + 1
+        image_resolutioin = (w, h)
+        self.video_window.change_image_resolution(image_resolutioin)
 
     def check_zoom_status(self):
         if self.zoom == 0.:
@@ -152,7 +159,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def make_video_window(self):
         self.video_window = CameraDisplay(
-            monitor_screen_resolution=self.monitor_screen_resolution)
+            image_resolution=self.image_resolution)
 
     def make_button_panel(self):
         self.button_panel = QtGui.QFrame()
@@ -353,6 +360,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.get_rows_and_columns_from_zoom()
         self.update_zoom_label()
         self.check_zoom_status()
+        self.change_video_window_display_resolution()
 
     def zoom_out(self):
         if self.zoom > 0.:
@@ -360,18 +368,19 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.get_rows_and_columns_from_zoom()
         self.update_zoom_label()
         self.check_zoom_status()
+        self.change_video_window_display_resolution()
 
 
 class CameraDisplay(QtGui.QLabel):
-    def __init__(self, monitor_screen_resolution=(640, 480), image_scale=1.3):
+    def __init__(self, image_resolution=(640, 480), image_scale=1.3):
         super(CameraDisplay, self).__init__()
-        self.monitor_screen_resolution = monitor_screen_resolution
+        self.image_resolution = image_resolution
         self.image_scale = image_scale
-        self.set_image_resolution_from_scale()
+        self.set_display_resolution_from_scale()
         self.initialize_image()
 
-    def set_image_resolution_from_scale(self):
-        height = self.monitor_screen_resolution[1]/self.image_scale
+    def set_display_resolution_from_scale(self):
+        height = self.image_resolution[1]/self.image_scale
         width = height * 4./3.  # adopt a 4:3 ratio for width and height
         self.width = int(width)
         self.height = int(height)
@@ -379,6 +388,10 @@ class CameraDisplay(QtGui.QLabel):
     def initialize_image(self):
         self.image = np.zeros((480, 640))
         self.update_frame()
+
+    def change_image_resolution(self, image_resolution):
+        self.image_resolution = image_resolution
+        self.set_display_resolution_from_scale()
 
     def update_video(self, image):
         self.image = image
