@@ -83,6 +83,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def crop_image(self):
         cropped_image = self.image[self.top_row:self.bottom_row,
                                    self.left_column:self.right_column]
+        print cropped_image.shape
         return cropped_image
 
     def get_screen_resolution(self):
