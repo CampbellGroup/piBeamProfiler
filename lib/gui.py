@@ -101,8 +101,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def get_rows_and_columns_from_zoom(self):
         h, w = self.image.shape
-        cropped_col_count_per_zoom_unit = w/2./self.zoom_max
-        cropped_row_count_per_zoom_unit = h/2./self.zoom_max
+        cropped_col_count_per_zoom_unit = w/2./(self.zoom_max+1)
+        cropped_row_count_per_zoom_unit = h/2./(self.zoom_max+1)
         self.left_column = int(self.zoom * cropped_col_count_per_zoom_unit)
         self.right_column = w - self.left_column
         self.top_row = int(self.zoom * cropped_row_count_per_zoom_unit)
