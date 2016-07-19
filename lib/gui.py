@@ -342,7 +342,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.exposure_label.setText(exposure_text)
 
     def update_zoom_label(self):
-        zoom_text = "Zoom: %" % str(self.zoom)
+        zoom_text = "Zoom: %s" % str(self.zoom)
         self.zoom_label.setText(zoom_text)
 
     def zoom_in(self):
