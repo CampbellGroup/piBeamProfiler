@@ -78,7 +78,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         return scaled_result
 
     def crop_image(self, image):
-        self.get_rows_and_columns_from_zoom()
         cropped_image = image[self.top_row:self.bottom_row,
                               self.left_column:self.right_column]
         return cropped_image
