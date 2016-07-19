@@ -348,6 +348,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def zoom_in(self):
         if self.zoom < 4.:
             self.zoom += 1.
+        print self.zoom
         self.get_rows_and_columns_from_zoom()
         self.update_zoom_label()
         self.check_zoom_status()
@@ -355,6 +356,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def zoom_out(self):
         if self.zoom > 0.:
             self.zoom -= 1.
+        print self.zoom
         self.get_rows_and_columns_from_zoom()
         self.update_zoom_label()
         self.check_zoom_status()
