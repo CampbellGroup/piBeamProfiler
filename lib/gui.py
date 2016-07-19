@@ -102,12 +102,13 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def get_rows_and_columns_from_zoom(self):
         h, w = self.image.shape
+        print "shape = self.image.shape"
         cropped_col_count_per_zoom_unit = int(w/4./self.zoom_max)
         cropped_row_count_per_zoom_unit = int(h/4./self.zoom_max)
         self.left_column = self.zoom * cropped_col_count_per_zoom_unit
-        self.right_column = w - self.left_column + 1
+        self.right_column = w - self.left_column
         self.top_row = self.zoom * cropped_row_count_per_zoom_unit
-        self.bottom_row = h - self.top_row + 1
+        self.bottom_row = h - self.top_row
 
     def make_widgets(self):
         self.make_column_and_row_sum_plots()
