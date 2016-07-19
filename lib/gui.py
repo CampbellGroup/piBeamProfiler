@@ -23,7 +23,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         super(PiBeamProfilerGUI, self).__init__()
         self.scale = .776
         self.zoom = 0.
-        self.zoom_max = 4.
+        self.zoom_max = 10.  # factor by which the image can be zoomed
         self.image_resolution = (640, 480)
         self.initialize_columns_and_rows()
         self.initialize_beam_profiler()
@@ -69,7 +69,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         if self.zoom == 0.:
             self.zoom_in_button.setEnabled(True)
             self.zoom_out_button.setDisabled(True)
-        elif self.zoom == 4.:
+        elif self.zoom == self.zoom_max:
             self.zoom_in_button.setDisabled(True)
             self.zoom_out_button.setEnabled(True)
         else:
@@ -101,11 +101,11 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def get_rows_and_columns_from_zoom(self):
         h, w = self.image.shape
-        cropped_col_count_per_zoom_unit = int(w/4./self.zoom_max)
-        cropped_row_count_per_zoom_unit = int(h/4./self.zoom_max)
-        self.left_column = self.zoom * cropped_col_count_per_zoom_unit
+        cropped_col_count_per_zoom_unit = w/2./self.zoom_max
+        cropped_row_count_per_zoom_unit = h/2./self.zoom_max
+        self.left_column = int(self.zoom * cropped_col_count_per_zoom_unit)
         self.right_column = w - self.left_column
-        self.top_row = self.zoom * cropped_row_count_per_zoom_unit
+        self.top_row = int(self.zoom * cropped_row_count_per_zoom_unit)
         self.bottom_row = h - self.top_row
 
     def make_widgets(self):
@@ -354,7 +354,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.zoom_label.setText(zoom_text)
 
     def zoom_in(self):
-        if self.zoom < 4.:
+        if self.zoom < self.zoom_max:
             self.zoom += 1.
         self.get_rows_and_columns_from_zoom()
         self.update_zoom_label()
