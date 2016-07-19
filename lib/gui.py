@@ -239,19 +239,13 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.blue_button.setChecked(False)
 
     def set_row_sum_plot_ylim(self):
-        ymin = 0
-        if self.bottom_row is None:
-            ymax = self.row_count - 1
-        else:
-            ymax = self.bottom_row - self.top_row - 1
+        ymin = self.top_row
+        ymax = self.bottom_row - 1
         self.row_sum_ax.set_ylim(ymin, ymax)
 
     def set_column_sum_plot_xlim(self):
-        xmin = 0
-        if self.right_column is None:
-            xmax = self.column_count - 1
-        else:
-            xmax = self.right_column - self.left_column - 1
+        xmin = self.left_column
+        xmax = self.right_column - 1
         self.column_sum_ax.set_xlim(xmin, xmax)
 
     def setup_layout(self):
