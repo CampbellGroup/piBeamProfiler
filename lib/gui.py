@@ -63,7 +63,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         w = self.right_column - self.left_column
         h = self.bottom_row - self.top_row
         image_resolutioin = (w, h)
-        print image_resolutioin
         self.video_window.change_image_resolution(image_resolutioin)
 
     def check_zoom_status(self):
@@ -102,7 +101,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
     def get_rows_and_columns_from_zoom(self):
         h, w = self.image.shape
-        print "shape = self.image.shape"
         cropped_col_count_per_zoom_unit = int(w/4./self.zoom_max)
         cropped_row_count_per_zoom_unit = int(h/4./self.zoom_max)
         self.left_column = self.zoom * cropped_col_count_per_zoom_unit
@@ -361,7 +359,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.get_rows_and_columns_from_zoom()
         self.update_zoom_label()
         self.check_zoom_status()
-        #self.change_video_window_display_resolution()
 
     def zoom_out(self):
         if self.zoom > 0.:
@@ -369,7 +366,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.get_rows_and_columns_from_zoom()
         self.update_zoom_label()
         self.check_zoom_status()
-        #self.change_video_window_display_resolution()
 
 
 class CameraDisplay(QtGui.QLabel):
