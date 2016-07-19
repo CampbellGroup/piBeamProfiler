@@ -81,7 +81,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         return scaled_result
 
     def crop_image(self):
-        print self.image.shape
         cropped_image = self.image[self.top_row:self.bottom_row,
                                    self.left_column:self.right_column]
         print cropped_image.shape
@@ -95,7 +94,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.monitor_screen_resolution = (width, height)
 
     def get_rows_and_columns_from_zoom(self):
-        w, h = self.image.shape
+        h, w = self.image.shape
         cropped_col_count_per_zoom_unit = int(w/4./self.zoom_max)
         cropped_row_count_per_zoom_unit = int(h/4./self.zoom_max)
         self.left_column = self.zoom * cropped_col_count_per_zoom_unit
