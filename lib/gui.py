@@ -24,6 +24,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.scale = .776
         self.zoom = 0.
         self.zoom_max = 4.
+        self.initialize_columns_and_rows()
         self.initialize_beam_profiler()
         self.initialize_gui()
 
@@ -348,12 +349,14 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def zoom_in(self):
         if self.zoom < 4.:
             self.zoom += 1.
+        self.initialize_columns_and_rows()
         self.update_zoom_label()
         self.check_zoom_status()
 
     def zoom_out(self):
         if self.zoom > 0.:
             self.zoom -= 1.
+        self.initialize_columns_and_rows()
         self.update_zoom_label()
         self.check_zoom_status()
 
