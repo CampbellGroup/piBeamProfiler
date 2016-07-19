@@ -361,7 +361,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.get_rows_and_columns_from_zoom()
         self.update_zoom_label()
         self.check_zoom_status()
-        self.change_video_window_display_resolution()
+        #self.change_video_window_display_resolution()
 
     def zoom_out(self):
         if self.zoom > 0.:
@@ -369,7 +369,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.get_rows_and_columns_from_zoom()
         self.update_zoom_label()
         self.check_zoom_status()
-        self.change_video_window_display_resolution()
+        #self.change_video_window_display_resolution()
 
 
 class CameraDisplay(QtGui.QLabel):
