@@ -34,6 +34,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.column_positions = np.linspace(
             0, self.column_count-1, self.column_count)
         self.row_positions = np.linspace(0, self.row_count-1, self.row_count)
+        self.get_rows_and_columns_from_zoom()
 
     def initialize_gui(self):
         self.get_screen_resolution()
