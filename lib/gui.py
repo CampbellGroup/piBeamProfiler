@@ -60,8 +60,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.profiler.set_camera_shutter_speed(shutter_speed)
 
     def change_video_window_display_resolution(self):
-        w = self.right_column - self.left_column + 1
-        h = self.bottom_row - self.top_row + 1
+        w = self.right_column - self.left_column
+        h = self.bottom_row - self.top_row
         image_resolutioin = (w, h)
         print image_resolutioin
         self.video_window.change_image_resolution(image_resolutioin)
