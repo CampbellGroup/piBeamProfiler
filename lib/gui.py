@@ -200,6 +200,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
 
         self.zoom_in_button.clicked.connect(self.zoom_in)
         self.zoom_out_button.clicked.connect(self.zoom_out)
+        self.update_zoom_label()
         self.check_zoom_status()
 
         self.red_button.setChecked(True)
