@@ -124,7 +124,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
             [], [], linestyle='--', linewidth=2, color='yellow')
 
         # set column sum plot details
-        self.set_column_sum_plot_lims()
         self.column_sum_ax.xaxis.set_ticks_position('none')
         self.column_sum_ax.yaxis.set_ticks_position('none')
         self.column_sum_ax.get_xaxis().set_visible(False)
@@ -240,23 +239,21 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.red_button.setChecked(False)
         self.blue_button.setChecked(False)
 
-    def set_row_sum_plot_lims(self):
-        self.row_sum_ax.set_xlim(0, 300)
-#        ymin = 0
-#        if self.bottom_row is None:
-#            ymax = self.row_count - 1
-#        else:
-#            ymax = self.bottom_row - self.top_row - 1
-#        self.row_sum_ax.set_ylim(ymin, ymax)
+    def set_row_sum_plot_ylim(self):
+        ymin = 0
+        if self.bottom_row is None:
+            ymax = self.row_count - 1
+        else:
+            ymax = self.bottom_row - self.top_row - 1
+        self.row_sum_ax.set_ylim(ymin, ymax)
 
-    def set_column_sum_plot_lims(self):
-#        xmin = 0
-#        if self.right_column is None:
-#            xmax = self.column_count - 1
-#        else:
-#            xmax = self.right_column - self.left_column - 1
-#        self.column_sum_ax.set_xlim(xmin, xmax)
-        self.column_sum_ax.set_ylim(0, 300)
+    def set_column_sum_plot_xlim(self):
+        xmin = 0
+        if self.right_column is None:
+            xmax = self.column_count - 1
+        else:
+            xmax = self.right_column - self.left_column - 1
+        self.column_sum_ax.set_xlim(xmin, xmax)
 
     def setup_layout(self):
         layout = QtGui.QGridLayout()
@@ -313,6 +310,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.column_sum_fit_lines.set_ydata(cropped_column_sum_fit)
         ymax = max(max(self.camera_image.column_sum), 300)
         self.column_sum_ax.set_ylim(0, ymax)
+        self.set_column_sum_plot_xlim()
         self.column_sum_figure.canvas.draw()
         self.column_sum_figure.canvas.flush_events()
 
@@ -332,6 +330,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.row_sum_fit_lines.set_ydata(cropped_row_positions)
         xmax = max(max(self.camera_image.row_sum), 300)
         self.row_sum_ax.set_xlim(0, xmax)
+        self.set_row_sum_plot_ylim()
         self.row_sum_figure.canvas.draw()
         self.row_sum_figure.canvas.flush_events()
 
