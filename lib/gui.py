@@ -100,8 +100,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.right_column = w - self.left_column + 1.
         self.top_row = self.zoom * cropped_row_count_per_zoom_unit
         self.bottom_row = h - self.top_row + 1.
-        self.set_column_sum_plot_lims()
-        self.set_row_sum_plot_lims()
 
     def make_widgets(self):
         self.make_column_and_row_sum_plots()
@@ -126,7 +124,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
             [], [], linestyle='--', linewidth=2, color='yellow')
 
         # set column sum plot details
-        self.set_column_sum_plot_lims()
         self.column_sum_ax.xaxis.set_ticks_position('none')
         self.column_sum_ax.yaxis.set_ticks_position('none')
         self.column_sum_ax.get_xaxis().set_visible(False)
@@ -146,7 +143,6 @@ class PiBeamProfilerGUI(QtGui.QWidget):
             [], [], linestyle='--', linewidth=2, color='yellow')
 
         # set row sum plot details
-        self.set_row_sum_plot_lims()
         self.row_sum_ax.xaxis.set_ticks_position('none')
         self.row_sum_ax.yaxis.set_ticks_position('none')
         self.row_sum_ax.get_xaxis().set_visible(False)
@@ -309,6 +305,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         cropped_column_sum_fit = self.camera_image.column_sum_fit[
             self.left_column:self.right_column]
 
+        self.set_column_sum_plot_lims()
         self.column_sum_lines.set_xdata(cropped_column_positions)
         self.column_sum_lines.set_ydata(cropped_column_sum)
         self.column_sum_fit_lines.set_xdata(cropped_column_positions)
@@ -328,6 +325,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         cropped_row_sum_fit = self.camera_image.row_sum_fit[
             self.top_row:self.bottom_row]
 
+        self.set_row_sum_plot_lims()
         self.row_sum_lines.set_xdata(cropped_row_sum)
         self.row_sum_lines.set_ydata(cropped_row_positions)
         self.row_sum_fit_lines.set_xdata(cropped_row_sum_fit)
