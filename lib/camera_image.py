@@ -36,8 +36,8 @@ class CameraImage(object):
         inverted_row_sum = inverted_row_sum - _n.min(inverted_row_sum)
         self.row_sum = inverted_row_sum[::-1]
 
-        self.column_positions = range(len(self.column_sum))
-        self.row_positions = range(len(self.row_sum))
+        self.column_positions = _n.array(range(len(self.column_sum)))
+        self.row_positions = _n.array(range(len(self.row_sum)))
 
     def _coarsen(self):
         self._coarsen_factor = 3.
