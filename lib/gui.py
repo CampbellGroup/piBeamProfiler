@@ -69,7 +69,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         if self.zoom == 0.:
             self.zoom_in_button.setEnabled(True)
             self.zoom_out_button.setDisabled(True)
-        elif self.zoom == self.zoom_max:
+        elif self.zoom == self.zoom_max-1:
             self.zoom_in_button.setDisabled(True)
             self.zoom_out_button.setEnabled(True)
         else:
