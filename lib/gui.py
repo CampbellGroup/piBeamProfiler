@@ -271,6 +271,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         layout.addWidget(self.row_sum_canvas, 0, 1)
         layout.addWidget(self.button_panel, 0, 2)
         layout.addWidget(self.information_panel, 1, 1, 1, 2)
+        layout.addWidget(self.exposure_slider, 0, 3)
+        layout.addWidget(self.exposure_bar, 0, 4)
         layout.setColumnStretch(0, 4)
         layout.setColumnStretch(1, 1)
         layout.setRowStretch(0, 8)
