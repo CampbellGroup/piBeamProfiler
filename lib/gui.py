@@ -1,4 +1,4 @@
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -53,7 +53,7 @@ class PiBeamProfilerGUI(QtGui.QWidget):
     def closeEvent(self, x):
         self.profiler.close_camera()
 
-    def change_camera_exposure(self, value):
+    def change_exposure(self, value):
         # set shutter speed (exposure time) according to a scaling law that
         # Tony likes
         shutter_speed = int(.5 * value**2. + 1)
@@ -113,6 +113,15 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         self.make_video_window()
         self.make_button_panel()
         self.make_information_panel()
+        self.make_exposure_bar()
+        
+    def make_exposure_bar(self):
+        self.exposure_slider = QtGui.QSlider(QtCore.Qt.Vertical)
+        self.exposure_slider.setSingleStep(1)
+        self.exposure_bar = QtGui.QProgressBar()
+        self.exposure_bar.setOrientation(QtCore.Qt.Vertical)
+        self.exposure_bar.setValue(65)
+        self.exposure_slider.valueChanged[int].connect(self.change_exposure)
 
     def make_column_and_row_sum_plots(self):
         self.make_column_sum_plot()
@@ -262,6 +271,8 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         layout.addWidget(self.row_sum_canvas, 0, 1)
         layout.addWidget(self.button_panel, 0, 2)
         layout.addWidget(self.information_panel, 1, 1, 1, 2)
+        layout.addWidget(self.exposure_slider, 0, 3)
+        layout.addWidget(self.exposure_bar, 0, 4)
         layout.setColumnStretch(0, 4)
         layout.setColumnStretch(1, 1)
         layout.setRowStretch(0, 8)
