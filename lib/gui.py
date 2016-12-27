@@ -356,9 +356,11 @@ class PiBeamProfilerGUI(QtGui.QWidget):
         row_diameter = self.convert_pixel_to_um(row_diameter_in_pix)
         row_text = 'Y = ' + str(row_diameter)[0:5] + text_ending
         self.row_sum_waist_label.setText(row_text)
-        exposure_text = 'Exposure: %s' % round(self.camera_image.saturation, 0)
+        exposure = round(self.camera_image.saturation, 0)
+        exposure_text = 'Exposure: %s' % exposure
         exposure_text += "%"
         self.exposure_label.setText(exposure_text)
+        self.exposure_bar.setValue(exposure)
 
     def update_zoom_label(self):
         zoom_factor = 1./(1. - self.zoom / self.zoom_max)
