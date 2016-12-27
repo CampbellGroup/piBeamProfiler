@@ -2,7 +2,7 @@
 Test functions.py module
 """
 import unittest as ut
-import pi_beam_profiler.lib.functions as functions
+import PiBeamProfiler.lib.functions as functions
 import numpy as np
 
 
