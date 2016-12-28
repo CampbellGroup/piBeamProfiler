@@ -7,7 +7,7 @@ http://stackoverflow.com/questions/21566379/
 fitting-a-2d-gaussian-function-using-scipy-optimize-curve-fit-valueerror-and-m
 """
 import unittest as ut
-import pi_beam_profiler.lib.camera_image as _ci
+import PiBeamProfiler.lib.camera_image as _ci
 import numpy as np
 
 
