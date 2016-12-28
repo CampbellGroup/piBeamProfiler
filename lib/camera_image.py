@@ -2,7 +2,6 @@
 Class to hold row and column sum data, projections of the image.
 """
 import numpy as _n
-# import cv2 as _cv2
 import functions as _functions
 
 
