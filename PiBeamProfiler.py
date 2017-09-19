@@ -17,8 +17,6 @@
 
 #CHANGES MADE:
 # changed the initial guess from 200 to 20
-# changed the number of data points use in coarsen
-# this is line 161 and 162 on master
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
@@ -164,8 +162,8 @@ class proflayout(QtGui.QWidget):
 
             rowampguess = rowsum.max()
             rowcenterguess = np.argmax(columnsum)
-            coarsecolumny, coarsecolumnx = self.coarsen(self.ypixels, columnsum, 1)
-            coarserowx, coarserowy = self.coarsen(self.xpixels, rowsum, 1)
+            coarsecolumny, coarsecolumnx = self.coarsen(self.ypixels, columnsum, 3)
+            coarserowx, coarserowy = self.coarsen(self.xpixels, rowsum, 3)
             coarsecolumny = np.nan_to_num(coarsecolumny)
             coarsecolumnx = np.nan_to_num(coarsecolumnx)
             coarserowy = np.nan_to_num(coarserowy)
