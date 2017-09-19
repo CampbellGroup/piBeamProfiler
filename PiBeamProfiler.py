@@ -13,7 +13,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# some change
+
+# CHANGES MADE:
+# changed the initial guess from 200 to 20
+
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 from picamera.array import PiRGBArray
@@ -400,3 +403,5 @@ if __name__ == "__main__":
     proflayoutwidget.show()
     proflayoutwidget.startCamera()
     sys.exit(a.exec_())
+
+
