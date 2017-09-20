@@ -14,10 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#CHANGES MADE:
-# changed the initial guess from 200 to 20
-
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 from picamera.array import PiRGBArray
@@ -162,8 +158,34 @@ class proflayout(QtGui.QWidget):
 
             rowampguess = rowsum.max()
             rowcenterguess = np.argmax(columnsum)
-            coarsecolumny, coarsecolumnx = self.coarsen(self.ypixels, columnsum, 3)
+            #********************************************************************
+            #          CONFUSION COMMENTS/Added Things
+            #********************************************************************
+            #coarsen function returns an array
+            # Why is coarsecolumny and coarserowx just there? what purpose does it have?
+            coarsecolumny , coarsecolumnx = self.coarsen(self.ypixels, columnsum, 3)
             coarserowx, coarserowy = self.coarsen(self.xpixels, rowsum, 3)
+
+            #Sorting through the array to pick 1/e**2 y value
+            #this finds the closest value within the list to 1/e**2
+            # and returns the index of this value
+            #rowy_e2 = min(coarserowy,key=lambda x:abs(x-(1/(np.exp(2)))))
+            #columny_e2 = min(coarsecolumny,key=lambda x:abs(x-(1/(np.exp(2)))))
+
+            def closest(list, Number):
+                aux = []
+                for valor in list:
+                    aux.append(abs(Number - valor))
+
+                return aux.index(min(aux))
+
+            #This section will pick out the x value corresponding to the 1/e**2 value
+            #Then it will multiply this value by two to find the width diameter
+            #use the same index used to find the y value and use that index for the x value
+            #once you find this x value, multiply by 2 to have the diameter width of the beam
+            rowx_e2 =.(coarserowy, np.exp(2)) #i know what to pass in but not the variable to use
+            columnx_e2 =.(coarsecolumny, np.exp(2))#do i make a new variable?
+
             coarsecolumny = np.nan_to_num(coarsecolumny)
             coarsecolumnx = np.nan_to_num(coarsecolumnx)
             coarserowy = np.nan_to_num(coarserowy)
@@ -171,16 +193,21 @@ class proflayout(QtGui.QWidget):
             columnampguess = coarsecolumnx.max()
             columncenterguess = np.argmax(coarsecolumnx)
 
+            columnwidthguess = 2*columnx_e2
+            rowwidthguess = 2*rowx_e2
+            #*********************************************************************
+            #                 End of changed stuff
+            #*********************************************************************
             if self.fitting is True:
                 try:
-                    p0 = [rowampguess, rowcenterguess, 20]
+                    p0 = [rowampguess, rowcenterguess, 200]
                     popt1, pcov1 = curve_fit(self.gaussian, coarserowx,
                                              coarserowy, p0=p0)
                 except:
                     popt1 = [0, 0, 1]
 
                 try:
-                    p0 = [columnampguess, columncenterguess, 20]
+                    p0 = [columnampguess, columncenterguess, 200]
                     popt2, pcov2 = curve_fit(self.gaussian, coarsecolumny,
                                              coarsecolumnx, p0=p0)
                 except:
@@ -397,6 +424,8 @@ class proflayout(QtGui.QWidget):
     def closeEvent(self, x):
         self.camera.close()
 
+    def sort(self,rowx,rowy):
+
 if __name__ == "__main__":
 
     a = QtGui.QApplication([])
@@ -404,5 +433,3 @@ if __name__ == "__main__":
     proflayoutwidget.show()
     proflayoutwidget.startCamera()
     sys.exit(a.exec_())
-
-
