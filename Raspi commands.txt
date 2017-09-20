@@ -2,6 +2,14 @@
 #                    General Settings commands
 #********************************************************************************
 
+#********************************************************************************
+#  **********************FOR RASPBERRY PI VIEWING  IN HAMILITON LAB**************
+#********************************************************************************
+# Remember that the code for the beam profiler runs under the home folder code
+# to access this code go onto cd /code/PiBeamProfiler and here you can edit the 
+# code on a text editor and pull changes from github
+#*********************************************************************************
+
 #help command helps give a summary of a command
 #and what it does, write the command name with this at the end
 --help
