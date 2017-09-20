@@ -27,7 +27,8 @@ import time
 import sys
 import cv2
 
-
+#Changed: Added a function to make the initial width guess more efficient andd added more data points used
+#Seems to work better on the raspberry pi
 class proflayout(QtGui.QWidget):
 
     def __init__(self):
