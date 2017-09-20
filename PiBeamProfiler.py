@@ -187,14 +187,14 @@ class proflayout(QtGui.QWidget):
             #the units are adjusted for later in the code
             if self.fitting is True:
                 try:
-                    p0 = [rowampguess, rowcenterguess, 200]
+                    p0 = [rowampguess, rowcenterguess, rowwidthguess]
                     popt1, pcov1 = curve_fit(self.gaussian, coarserowx,
                                              coarserowy, p0=p0)
                 except:
                     popt1 = [0, 0, 1]
 
                 try:
-                    p0 = [columnampguess, columncenterguess, 200]
+                    p0 = [columnampguess, columncenterguess, columnwidthguess]
                     popt2, pcov2 = curve_fit(self.gaussian, coarsecolumny,
                                              coarsecolumnx, p0=p0)
                 except:
