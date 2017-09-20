@@ -163,8 +163,8 @@ class proflayout(QtGui.QWidget):
             #********************************************************************
             #coarsen function returns an array
             # Why is coarsecolumny and coarserowx just there? what purpose does it have?
-            coarsecolumny , coarsecolumnx = self.coarsen(self.ypixels, columnsum, 3)
-            coarserowx, coarserowy = self.coarsen(self.xpixels, rowsum, 3)
+            coarsecolumny , coarsecolumnx = self.coarsen(self.ypixels, columnsum, 1)
+            coarserowx, coarserowy = self.coarsen(self.xpixels, rowsum, 1)
 
             coarsecolumny = np.nan_to_num(coarsecolumny)
             coarsecolumnx = np.nan_to_num(coarsecolumnx)
