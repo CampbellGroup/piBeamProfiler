@@ -1,0 +1,206 @@
+﻿#********************************************************************************
+#                    General Settings commands
+#********************************************************************************
+
+#help command helps give a summary of a command
+#and what it does, write the command name with this at the end
+--help
+
+#go into a folder change where your directory search is
+cd foldername/subfoldername
+
+#list the contents in a directory or folder
+#type this after folder name
+ls 
+
+#Retrieving Minimized tabs
+#press alt and then press tab
+
+#drag tabs around by pressing alt and dragging with a mouse
+
+#keep in mind the pi has to be connected to the internet to be fully updated
+#updating packages
+sudo apt-get update
+
+#upgrading packages
+sudo apt-get upgrade
+
+# Make sure this is in front to make any commands
+pi@raspberrypi:/$
+
+# To get to the configurations document and modify
+# uncomment things and reboot to apply
+# ctrl X, y, ctrl M to apply
+#sudo reboot to apply the new changes
+sudo nano /boot/config.txt
+
+# To rotate the display screen
+display_rotate=0 #no rotatatin
+display_rotate=1 #rotate by 90 degrees
+display_rotate=2 #rotate by 180 degrees
+display_rotate=3 #rotate by 270 degrees
+
+#this will mess up the mouse settings on the screen so this might help
+$ sudo apt-get install xinput #try this with/ without the $ symbol, not sure which one actually works
+xinput --list
+DISPLAY=:0 xinput --list
+xinput set-prop 'FT5406 memory based driver' 'Evdev Axes Swap' 1
+xinput --set-prop 'FT5406 memory based driver' 'Evdev Axis Inversion' 0 1
+xinput --set-prop 'FT5406 memory based driver' 'Evdev Axis Inversion' 1 0
+
+#Getting to the menu Options
+#getting to different menu options
+sudo raspi-config
+
+#another page that you can configure the settings for
+sudo nano /etc/resolv.conf
+
+#overscan
+#to change how the display fits the screen change the overscan settings
+#this will be under this file so type this code in
+#this file changes basic settings of the pi such as screen rotation,
+#overscan (whether the screen fits properly), and other things
+# ctrl X, y, ctrl M to apply
+#sudo reboot to apply the new changes
+sudo nano /boot/config.txt
+
+#To update and Upgrade 
+
+#When you get this error the internet section might help
+#go to internet section to try and resolve this error
+#Err http://archive.raspberrypi.org wheezy InRelease
+  
+#Err http://mirrordirector.raspbian.org wheezy InRelease
+  
+#Err http://archive.raspberrypi.org wheezy Release.gpg
+ # Temporary failure resolving 'archive.raspberrypi.org'
+#Err http://mirrordirector.raspbian.org wheezy Release.gpg
+#  Temporary failure resolving 'mirrordirector.raspbian.org'
+#Reading package lists... Done
+#W: Failed to fetch http://mirrordirector.raspbian.org/raspbian/dists/wheezy/InRelease  
+
+#W: Failed to fetch http://archive.raspberrypi.org/debian/dists/wheezy/InRelease  
+
+#W: Failed to fetch http://archive.raspberrypi.org/debian/dists/wheezy/Release.gpg  
+#Temporary failure resolving 'archive.raspberrypi.org'
+
+#W: Failed to fetch http://mirrordirector.raspbian.org/raspbian/dists/wheezy/Release.gpg  
+#Temporary failure resolving 'mirrordirector.raspbian.org'
+
+#W: Some index files failed to download. They have been ignored, or old ones used instead.
+
+
+#*****************************************************************************************
+#                          Internet Help/commands
+#*****************************************************************************************
+
+#add this to page and then save in the way you did earlier
+#these nameservers belong to google
+#configuring the internet
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+
+#Opening the network configurations
+sudo nano /etc/network/interfaces
+
+#This could work for getting the internet to work
+auto eth0
+iface eth0 inet dhcp #change the static to dhcp
+
+#testing the internet speed (enter commands in this order)
+sudo apt-get install python-pip
+sudo easy_install speedtest-cli
+speedtest-cli #outputs the speed
+
+#This Did not resolve the updating problems but those pieces of code 
+#might be useful for something
+
+#To install something similar to chrome use this:
+$ sudo apt-get install chromium-browser
+
+#if this does not work use the update command and then rerun chromium
+
+#*****************************************************************************************
+#                          Camera Help/commands
+#*****************************************************************************************
+
+#Getting to the menu Options to Hopefully get the Camera Working
+#this will access camera options
+sudo raspi-config
+
+#Opening up the Camera Options
+#make sure that normal raspberry pi command is there
+#pi@raspberrypi:~$
+raspistill
+
+#taking a picture
+#the last part is the name of the image
+raspistill -o image.jpg
+
+#record a video
+raspivid
+
+#To capture a 10 second video with raspberry pi
+raspivid -o video.h264 -t 1000
+
+# open the menu options
+sudo raspi-config
+
+#to change how the display fits the screen change the overscan settings
+#this will be under this file so type this code in
+sudo nano /boot/config.txt
+
+#************************************************************************
+#                    Coding/Using Git and Github
+#************************************************************************
+
+#installing git 
+sudo apt-get install git
+
+#configure git  
+git config --global user.name "Harry Potter"
+git config --global user.email "h.potter@hogwarts.prof
+
+#text editor (you can use a different text editor this one just sets one 
+# and works fine)
+git config --global core.editor nano
+
+#clone a repository (still figuring out which folder it goes to?)
+#use any website name and have the .git at the end of the github website
+git clone https://github.com/CampbellGroup/PiBeamProfiler.git
+
+#git commands
+git checkout branchname #type in the name you want to checkout
+git branch #shows you which branch you are on
+
+#when the code on the device conflicts with code on the internet, this 
+#command changes the code on the device to match the one on the internet
+git stash 
+
+#shows the differences between code on github and code on device
+git diff
+
+#run the code (i think?)
+python CodeName
+
+#changing the code on the pi
+nano PiBeamProfiler.py
+
+#three steps to change code and send to github on the internet
+# 1
+git add file name 
+# or this one
+#this goes through your changes one by one and you say whether it is okay to add them
+git add -p
+
+#2
+# write a message of what you changed
+git commit -m "message"
+
+#3
+#send to the internet
+#NEVER PUSH MASTER
+git push origin branchname
+
+# obtain the code from the internet
+git pull
