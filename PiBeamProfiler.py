@@ -159,7 +159,7 @@ class proflayout(QtGui.QWidget):
             rowampguess = rowsum.max()
             rowcenterguess = np.argmax(columnsum)
             #********************************************************************
-            #          CONFUSION COMMENTS/Added Things
+            #                         Added Things
             #********************************************************************
             #coarsen function returns an array
             # Why is coarsecolumny and coarserowx just there? what purpose does it have?
@@ -411,9 +411,13 @@ class proflayout(QtGui.QWidget):
     def closeEvent(self, x):
         self.camera.close()
 
+    # ***********************************************************************************************
+    #                               Added Function
+    #************************************************************************************************
     # This function is used to sort through the y array to pick the value closest to 1/e**2
     # and returns the index of this value in the array
     def closest(self,list, Number):
+
         temp = []
         # item becomes a variable after the for
         for item in list:
