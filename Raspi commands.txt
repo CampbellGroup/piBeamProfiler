@@ -17,11 +17,19 @@
 --help
 
 #*****************************
-# Moving/Retrieving Tabs
+# Moving/Retrieving Tabs/Using Terminal
 #*****************************
 #press alt and then press tab
 
 #move a tab by clicking anywhere and holding alt to move the tab
+
+#press tab to finish typing
+# Example: "Pi" and then tab will finish itself most likely finish to
+# PiBeamProfiler/
+# this works for commands and folder names 
+
+#press up key to retrieve the last thing that was typed and 
+#keep clicking to find more previous commands
 
 #*****************************
 # Basic Commands and Updates
