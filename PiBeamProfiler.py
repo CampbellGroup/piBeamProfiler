@@ -166,26 +166,6 @@ class proflayout(QtGui.QWidget):
             coarsecolumny , coarsecolumnx = self.coarsen(self.ypixels, columnsum, 3)
             coarserowx, coarserowy = self.coarsen(self.xpixels, rowsum, 3)
 
-            #Sorting through the array to pick 1/e**2 y value
-            #this finds the closest value within the list to 1/e**2
-            # and returns the index of this value
-            #rowy_e2 = min(coarserowy,key=lambda x:abs(x-(1/(np.exp(2)))))
-            #columny_e2 = min(coarsecolumny,key=lambda x:abs(x-(1/(np.exp(2)))))
-
-            def closest(list, Number):
-                aux = []
-                for valor in list:
-                    aux.append(abs(Number - valor))
-
-                return aux.index(min(aux))
-
-            #This section will pick out the x value corresponding to the 1/e**2 value
-            #Then it will multiply this value by two to find the width diameter
-            #use the same index used to find the y value and use that index for the x value
-            #once you find this x value, multiply by 2 to have the diameter width of the beam
-            rowx_e2 =.(coarserowy, np.exp(2)) #i know what to pass in but not the variable to use
-            columnx_e2 =.(coarsecolumny, np.exp(2))#do i make a new variable?
-
             coarsecolumny = np.nan_to_num(coarsecolumny)
             coarsecolumnx = np.nan_to_num(coarsecolumnx)
             coarserowy = np.nan_to_num(coarserowy)
@@ -193,11 +173,18 @@ class proflayout(QtGui.QWidget):
             columnampguess = coarsecolumnx.max()
             columncenterguess = np.argmax(coarsecolumnx)
 
-            columnwidthguess = 2*columnx_e2
-            rowwidthguess = 2*rowx_e2
+            #obtain indices in x array to obtain x value when y=1/e**2
+            rowx_e2 = self.closest(coarserowy, np.exp(2))
+            columnx_e2 = self.closest(coarsecolumny, np.exp(2))
+
+            # coarsecolumnx uses the index associated with the 1/e**2 value to find x value
+            #multiply x value by 2 to find the width diameter
+            columnwidthguess = 2*columnampguess*coarsecolumnx[columnx_e2]
+            rowwidthguess = 2*rowampguess*coarserowx[rowx_e2]
             #*********************************************************************
             #                 End of changed stuff
             #*********************************************************************
+            #the units are adjusted for later in the code
             if self.fitting is True:
                 try:
                     p0 = [rowampguess, rowcenterguess, 200]
@@ -424,7 +411,15 @@ class proflayout(QtGui.QWidget):
     def closeEvent(self, x):
         self.camera.close()
 
-    def sort(self,rowx,rowy):
+    # This function is used to sort through the y array to pick the value closest to 1/e**2
+    # and returns the index of this value in the array
+    def closest(self,list, Number):
+        temp = []
+        # item becomes a variable after the for
+        for item in list:
+            temp.append(abs(Number - item))
+
+        return temp.index(min(temp))
 
 if __name__ == "__main__":
 
