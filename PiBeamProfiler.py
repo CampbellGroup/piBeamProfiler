@@ -180,8 +180,9 @@ class proflayout(QtGui.QWidget):
 
             # coarsecolumnx uses the index associated with the 1/e**2 value to find x value
             #multiply x value by 2 to find the width diameter
-            columnwidthguess = 2*columnampguess*coarsecolumnx[columnx_e2]
-            rowwidthguess = 2*rowampguess*coarserowx[rowx_e2]
+            columnwidthguess = 2*coarsecolumnx[columnx_e2]
+            rowwidthguess = 2*coarserowx[rowx_e2]
+
             #*********************************************************************
             #                 End of changed stuff
             #*********************************************************************
