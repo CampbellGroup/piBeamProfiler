@@ -195,6 +195,7 @@ raspistill
 
 #taking a picture
 #the last part is the name of the image
+#It will be saved to your user's home directory with this filename 
 raspistill -o image.jpg
 
 #record a video
