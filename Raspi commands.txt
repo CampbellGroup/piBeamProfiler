@@ -215,7 +215,7 @@ sudo rpi-update
 
 #Increasing gpu memory
 #go to the config.txt document described in configurations section
-#increase gpu memory so that gpu_mem = 144
+#increase gpu memory so that gpu_mem = 144 #this messed up beam profiler 
 
 
 
