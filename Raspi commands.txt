@@ -159,11 +159,17 @@ sudo raspi-config
 sudo nano /etc/network/interfaces
 
 #these nameservers belong to google
+#add this to the resolve.conf document
 nameserver 8.8.8.8
 nameserver 8.8.4.4
 
-#I wrote this on the document to get it to work
-auto eth0
+#The top of the document currently says 
+#iface wlan0
+#Replace it at the top with this to get it to work
+auto eth0 #this should be only thing at the top
+
+#find something that looks like this on this document and change the 
+#static to dhcp
 iface eth0 inet dhcp #change the static to dhcp
 
 #************************
@@ -211,6 +217,7 @@ sudo raspi-config
 #this might be useful (didnt work for me though)
 #firmware is problem
 # Use the following command to get the very latest (but experimental) firmware:
+#DO NOT USE THIS MADE SOFTWARE NOT WORK
 sudo rpi-update
 
 #Increasing gpu memory
@@ -288,3 +295,5 @@ git pull
 python codename.py
 #in the beam profiler's case then run
 python PiBeamProfiler.py
+
+
