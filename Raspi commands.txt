@@ -31,6 +31,9 @@
 #press up key to retrieve the last thing that was typed and 
 #keep clicking to find more previous commands
 
+#things that are saved or created automatically go to the 
+#home directory category
+
 #*****************************
 # Basic Commands and Updates
 #*****************************
@@ -272,8 +275,10 @@ nano PiBeamProfiler.py
 
 	#three steps to change code and send to github on the internet
 # 1
+#use this one when entire files are added to a folder
 git add file name 
 # or this one
+#use this one to see changes made to certain documents already in the folder
 #this goes through your changes one by one and you say whether it is okay to add them
 git add -p
 
