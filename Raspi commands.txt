@@ -207,6 +207,17 @@ raspivid -o video.h264 -t 1000
 # open the menu options
 sudo raspi-config
 
+	#Fixing the Camera
+#this might be useful (didnt work for me though)
+#firmware is problem
+# Use the following command to get the very latest (but experimental) firmware:
+sudo rpi-update
+
+#Increasing gpu memory
+#go to the config.txt document described in configurations section
+#increase gpu memory so that gpu_mem = 144
+
+
 
 #************************************************************************
 #                    Coding/Using Git and Github
