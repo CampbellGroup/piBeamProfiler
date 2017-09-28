@@ -225,7 +225,7 @@ sudo rpi-update
 
 #Increasing gpu memory
 #go to the config.txt document described in configurations section
-#increase gpu memory so that gpu_mem = 144 #this messed up beam profiler 
+#increase gpu memory so that gpu_mem = 144 #this messed up beam profiler requires more power 
 
 
 
@@ -276,7 +276,7 @@ nano PiBeamProfiler.py
 	#three steps to change code and send to github on the internet
 # 1
 #use this one when entire files are added to a folder
-git add file name 
+git add filename 
 # or this one
 #use this one to see changes made to certain documents already in the folder
 #this goes through your changes one by one and you say whether it is okay to add them
@@ -294,11 +294,14 @@ git push origin branchname
 	# obtain the code from the internet
 git pull
 
+#removing a folder
+#make sure you are in the folder by using cd and ls
+git rm -rf foldername
+
 #running python on the raspberry pi
 # CAUTION you can only run this when you are within the folder this is located which means you still have
 #to run cd code/PiBeamProfiler/ first to access the python code
 python codename.py
 #in the beam profiler's case then run
 python PiBeamProfiler.py
-
 
