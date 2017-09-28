@@ -296,7 +296,9 @@ git pull
 
 #removing a folder
 #make sure you are in the folder by using cd and ls
+#do steps 2 and 3 to send to github
 git rm -rf foldername
+
 
 #running python on the raspberry pi
 # CAUTION you can only run this when you are within the folder this is located which means you still have
